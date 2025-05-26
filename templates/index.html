@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Prompt Extractor</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container my-5">
+        <!-- Header -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-5">
+                    <h1 class="display-4 fw-bold mb-3">
+                        <i class="fas fa-image text-primary me-3"></i>
+                        Image Prompt Extractor
+                    </h1>
+                    <p class="lead text-muted">
+                        Extract descriptive prompts from images using Google Gemini Vision AI
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="row justify-content-center mb-4">
+                    <div class="col-lg-8">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{% if category == 'error' %}danger{% elif category == 'success' %}success{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                                <i class="fas fa-{% if category == 'error' %}exclamation-triangle{% elif category == 'success' %}check-circle{% else %}info-circle{% endif %} me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Main Form -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg">
+                    <div class="card-body p-5">
+                        <form method="POST" action="{{ url_for('analyze_image') }}" enctype="multipart/form-data" id="imageAnalysisForm">
+                            
+                            <!-- Method Selection -->
+                            <div class="mb-4">
+                                <h5 class="card-title mb-3">
+                                    <i class="fas fa-upload me-2"></i>
+                                    Choose Analysis Method
+                                </h5>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="method" id="urlMethod" value="url" checked>
+                                            <label class="form-check-label fw-bold" for="urlMethod">
+                                                <i class="fas fa-link me-2"></i>Image URL
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="method" id="fileMethod" value="file">
+                                            <label class="form-check-label fw-bold" for="fileMethod">
+                                                <i class="fas fa-file-upload me-2"></i>File Upload
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Image URL Input -->
+                            <div class="mb-4" id="urlSection">
+                                <label for="image_url" class="form-label fw-bold">
+                                    <i class="fas fa-link me-2"></i>Image URL
+                                </label>
+                                <input type="url" 
+                                       class="form-control form-control-lg" 
+                                       id="image_url" 
+                                       name="image_url" 
+                                       placeholder="https://example.com/image.jpg"
+                                       value="https://i.ibb.co/MkVH92j3/image.jpg">
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Enter a direct link to an image (PNG, JPG, GIF, WebP, BMP)
+                                </div>
+                            </div>
+
+                            <!-- File Upload Input -->
+                            <div class="mb-4 d-none" id="fileSection">
+                                <label for="image_file" class="form-label fw-bold">
+                                    <i class="fas fa-file-upload me-2"></i>Upload Image
+                                </label>
+                                <input type="file" 
+                                       class="form-control form-control-lg" 
+                                       id="image_file" 
+                                       name="image_file" 
+                                       accept=".png,.jpg,.jpeg,.gif,.webp,.bmp">
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Maximum file size: 16MB. Supported formats: PNG, JPG, GIF, WebP, BMP
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg" id="analyzeBtn">
+                                    <i class="fas fa-magic me-2"></i>
+                                    <span id="btnText">Analyze Image</span>
+                                    <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        {% if prompt %}
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-success">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Analysis Result
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Generated Prompt:</label>
+                            <div class="alert alert-light border">
+                                <i class="fas fa-quote-left me-2 text-muted"></i>
+                                <span class="prompt-text">{{ prompt }}</span>
+                                <i class="fas fa-quote-right ms-2 text-muted"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-secondary" onclick="copyToClipboard('{{ prompt|replace("'", "\\'") }}')">
+                                <i class="fas fa-copy me-1"></i>Copy to Clipboard
+                            </button>
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-refresh me-1"></i>Analyze Another Image
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- API Documentation -->
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-code me-2"></i>
+                            API Documentation
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">Use the REST API to integrate image analysis into your applications:</p>
+                        
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Endpoint:</h6>
+                            <code class="bg-dark text-light p-2 rounded d-block">POST /api/analyze</code>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Request (JSON):</h6>
+                            <pre class="bg-dark text-light p-3 rounded"><code>{
+  "image_url": "https://example.com/image.jpg"
+}</code></pre>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Response:</h6>
+                            <pre class="bg-dark text-light p-3 rounded"><code>{
+  "success": true,
+  "prompt": "A descriptive prompt..."
+}</code></pre>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6 class="fw-bold">File Upload:</h6>
+                            <p class="text-muted small">Send a multipart/form-data request with the image file in the 'image_file' field.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-5 pt-4 border-top">
+            <p class="text-muted">
+                <i class="fas fa-robot me-2"></i>
+                Powered by Google Gemini Vision AI
+            </p>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Handle method selection
+        document.querySelectorAll('input[name="method"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const urlSection = document.getElementById('urlSection');
+                const fileSection = document.getElementById('fileSection');
+                const urlInput = document.getElementById('image_url');
+                const fileInput = document.getElementById('image_file');
+                
+                if (this.value === 'url') {
+                    urlSection.classList.remove('d-none');
+                    fileSection.classList.add('d-none');
+                    fileInput.value = '';
+                } else {
+                    urlSection.classList.add('d-none');
+                    fileSection.classList.remove('d-none');
+                    urlInput.value = '';
+                }
+            });
+        });
+
+        // Handle form submission
+        document.getElementById('imageAnalysisForm').addEventListener('submit', function() {
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+            
+            // Show loading state
+            analyzeBtn.disabled = true;
+            btnText.textContent = 'Analyzing...';
+            btnSpinner.classList.remove('d-none');
+        });
+
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(function() {
+                    showToast('Prompt copied to clipboard!', 'success');
+                }).catch(function() {
+                    fallbackCopyTextToClipboard(text);
+                });
+            } else {
+                fallbackCopyTextToClipboard(text);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast('Prompt copied to clipboard!', 'success');
+            } catch (err) {
+                showToast('Failed to copy prompt', 'error');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function showToast(message, type) {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas fa-${type === 'success' ? 'check' : 'exclamation-triangle'} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            
+            // Add to page
+            const toastContainer = document.createElement('div');
+            toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            toastContainer.appendChild(toast);
+            document.body.appendChild(toastContainer);
+            
+            // Show toast
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            // Remove after hiding
+            toast.addEventListener('hidden.bs.toast', () => {
+                document.body.removeChild(toastContainer);
+            });
+        }
+
+        // Auto-dismiss alerts after 10 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert:not(.alert-light)');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 10000);
+    </script>
+</body>
+</html>
