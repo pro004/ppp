@@ -6,6 +6,8 @@ from io import BytesIO
 import google.generativeai as genai
 from urllib.parse import urlparse
 import time
+import threading
+from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +18,9 @@ class ImageAnalyzer:
         """Initialize the ImageAnalyzer with Gemini API configuration."""
         self.api_key = os.getenv("GEMINI_API_KEY", "AIzaSyCfdO3Mp0rwzgmtQFWMyxyCO6M6wFQMGIY")
         self.model = None
+        self.last_request_time = None
+        self.request_count = 0
+        self.request_lock = threading.Lock()
         self._configure_gemini()
     
     def _configure_gemini(self):
@@ -37,6 +42,27 @@ class ImageAnalyzer:
     def is_configured(self):
         """Check if the Gemini API is properly configured."""
         return self.model is not None
+    
+    def _rate_limit(self):
+        """Simple rate limiting to prevent quota issues."""
+        with self.request_lock:
+            current_time = datetime.now()
+            
+            # Reset counter every minute
+            if self.last_request_time is None or current_time - self.last_request_time > timedelta(minutes=1):
+                self.request_count = 0
+                self.last_request_time = current_time
+            
+            # If we've made too many requests, wait a bit
+            if self.request_count >= 15:  # Conservative limit for Flash model
+                sleep_time = 60 - (current_time - self.last_request_time).seconds
+                if sleep_time > 0:
+                    logger.info(f"Rate limit reached, waiting {sleep_time} seconds...")
+                    time.sleep(sleep_time)
+                    self.request_count = 0
+                    self.last_request_time = datetime.now()
+            
+            self.request_count += 1
     
     def _validate_image_url(self, url):
         """Validate if the URL is properly formatted and accessible."""
@@ -169,6 +195,9 @@ class ImageAnalyzer:
 
             Respond with ONLY the detailed visual description. No prefixes like "This image shows" or "The image depicts" - start directly with the description.
             """
+            
+            # Apply rate limiting to prevent quota issues
+            self._rate_limit()
             
             start_time = time.time()
             
