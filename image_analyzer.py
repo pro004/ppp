@@ -146,51 +146,27 @@ class ImageAnalyzer:
             raise RuntimeError("Gemini API is not properly configured")
         
         try:
-            # Enhanced system prompt for maximum detail and accuracy
+            # Ultra-precise prompt for clean, detailed image description
             system_prompt = """
-            Analyze this image with extreme detail and precision. Create the most comprehensive, accurate descriptive prompt possible that captures EVERY visual element. Include:
+            Describe this image with maximum precision and detail. Provide ONLY the pure visual description without any introductory phrases, explanations, or commentary. Focus on exact visual elements:
 
-            COMPOSITION & FRAMING:
-            - Camera angle, perspective, and framing (close-up, wide shot, etc.)
-            - Rule of thirds, symmetry, leading lines, depth of field
-            - Foreground, middle ground, and background elements
+            Physical subjects: precise age, gender, build, posture, facial features, expressions, clothing details, accessories, hairstyles, actions, positions
 
-            SUBJECTS & CHARACTERS:
-            - Detailed physical descriptions (age, gender, ethnicity, build, posture)
-            - Facial expressions, emotions, body language, gestures
-            - Clothing, accessories, hairstyles with specific details
-            - Actions, interactions, and positioning relative to each other
+            Environment: exact location type, architectural elements, furniture, objects, props, spatial relationships, background details
 
-            ENVIRONMENT & SETTING:
-            - Specific location type (indoor/outdoor, architectural style, landscape)
-            - Time of day, season, weather conditions
-            - Cultural or geographical context if evident
-            - Props, furniture, vehicles, and background objects
+            Visual style: specific art style, medium, technique, rendering quality, artistic influences
 
-            VISUAL STYLE & TECHNIQUE:
-            - Art style (realistic, cartoon, anime, painting, photography, 3D render)
-            - Technical aspects (resolution, grain, bokeh, HDR, filters)
-            - Artistic movement or influence if applicable
+            Lighting: light source locations, shadow patterns, highlight placement, contrast levels, atmospheric effects
 
-            LIGHTING & ATMOSPHERE:
-            - Light source direction, intensity, and quality (soft/hard)
-            - Shadows, highlights, contrast levels
-            - Atmospheric effects (fog, haze, particles, reflections)
-            - Overall mood and emotional tone
+            Colors: specific color names, saturation levels, temperature, gradients, color relationships
 
-            COLOR & TEXTURE:
-            - Dominant color palette and specific color combinations
-            - Color temperature (warm/cool), saturation levels
-            - Material textures (smooth, rough, metallic, fabric, etc.)
-            - Transparency, opacity, and surface properties
+            Composition: framing, perspective, depth, focal points, visual balance, leading elements
 
-            FINE DETAILS:
-            - Text, symbols, logos, or writing visible in the image
-            - Small objects, patterns, decorative elements
-            - Quality indicators (sharp/blurry areas, artifacts)
-            - Any unique or unusual elements that stand out
+            Textures and materials: surface qualities, material types, transparency, reflectivity, wear patterns
 
-            Provide an extremely detailed, comprehensive description that would allow someone to recreate this image with maximum fidelity. Be precise, specific, and thorough while maintaining natural language flow.
+            Fine details: text, symbols, patterns, decorative elements, small objects, quality indicators
+
+            Respond with ONLY the detailed visual description. No prefixes like "This image shows" or "The image depicts" - start directly with the description.
             """
             
             start_time = time.time()
@@ -202,30 +178,82 @@ class ImageAnalyzer:
             logger.info(f"Enhanced Gemini API call completed in {elapsed_time:.2f} seconds")
             
             if response and response.text:
-                # Clean up and enhance the response text
+                # Clean up the response text aggressively for pure description
                 prompt = response.text.strip()
                 
-                # Remove any potential prefixes, suffixes, or formatting artifacts
+                # Remove quotes if present
                 if prompt.startswith('"') and prompt.endswith('"'):
                     prompt = prompt[1:-1]
                 
-                # Remove common AI response prefixes
+                # Comprehensive list of AI response prefixes to remove
                 prefixes_to_remove = [
                     "Here's a detailed description of the image:",
+                    "Here's a detailed description:",
+                    "Here's the description:",
                     "This image shows:",
+                    "This image depicts:",
+                    "This image features:",
+                    "This image contains:",
+                    "The image shows:",
                     "The image depicts:",
+                    "The image features:",
+                    "The image contains:",
+                    "The image displays:",
                     "I can see:",
+                    "I observe:",
                     "Looking at this image:",
+                    "In this image:",
+                    "The scene shows:",
+                    "The scene depicts:",
+                    "This scene shows:",
+                    "This artwork shows:",
+                    "This illustration shows:",
+                    "This photograph shows:",
+                    "This digital art shows:",
+                    "Based on the image:",
+                    "From what I can see:",
+                    "What I see is:",
+                    "The visual content shows:",
+                    "The visual shows:",
+                    "Visually, this shows:",
+                    "The picture shows:",
+                    "The picture depicts:",
+                    "**",
+                    "*",
                 ]
                 
+                # Remove prefixes case-insensitively
                 for prefix in prefixes_to_remove:
                     if prompt.lower().startswith(prefix.lower()):
                         prompt = prompt[len(prefix):].strip()
+                        break
                 
-                # Ensure proper formatting and flow
-                prompt = ' '.join(prompt.split())  # Normalize whitespace
+                # Remove common suffixes that might indicate meta-commentary
+                suffixes_to_remove = [
+                    "Overall, this image",
+                    "In summary,",
+                    "To summarize,",
+                    "This description captures",
+                    "This prompt would allow",
+                ]
                 
-                logger.info(f"Generated enhanced prompt: {prompt[:150]}...")
+                for suffix in suffixes_to_remove:
+                    if suffix.lower() in prompt.lower():
+                        index = prompt.lower().find(suffix.lower())
+                        prompt = prompt[:index].strip()
+                        break
+                
+                # Clean up any remaining markdown or formatting
+                prompt = prompt.replace("**", "").replace("*", "")
+                
+                # Normalize whitespace and ensure single spaces
+                prompt = ' '.join(prompt.split())
+                
+                # Remove any trailing periods that might be added by AI
+                if prompt.endswith('.'):
+                    prompt = prompt[:-1]
+                
+                logger.info(f"Generated clean prompt: {prompt[:150]}...")
                 return prompt
             else:
                 logger.error("Empty response from Gemini API")
