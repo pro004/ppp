@@ -26,8 +26,9 @@ class ImageAnalyzer:
                 return
             
             genai.configure(api_key=self.api_key)
+            # Use gemini-1.5-flash for optimal balance of speed, accuracy and quota limits
             self.model = genai.GenerativeModel('gemini-1.5-flash')
-            logger.info("Gemini API configured successfully")
+            logger.info("Gemini API configured successfully with Flash model for high accuracy and reliability")
             
         except Exception as e:
             logger.error(f"Failed to configure Gemini API: {str(e)}")
@@ -171,11 +172,38 @@ class ImageAnalyzer:
             
             start_time = time.time()
             
-            # Generate content using Gemini with enhanced parameters
-            response = self.model.generate_content([system_prompt, image])
+            # Generate content with retry logic for quota errors
+            max_retries = 3
+            base_delay = 2
             
-            elapsed_time = time.time() - start_time
-            logger.info(f"Enhanced Gemini API call completed in {elapsed_time:.2f} seconds")
+            for attempt in range(max_retries):
+                try:
+                    response = self.model.generate_content([system_prompt, image])
+                    elapsed_time = time.time() - start_time
+                    logger.info(f"Enhanced Gemini API call completed in {elapsed_time:.2f} seconds")
+                    break
+                except Exception as e:
+                    error_str = str(e)
+                    if "429" in error_str or "quota" in error_str.lower():
+                        if attempt < max_retries - 1:
+                            # Extract retry delay from error if available, otherwise use exponential backoff
+                            retry_delay = base_delay * (2 ** attempt)
+                            if "retry_delay" in error_str:
+                                try:
+                                    # Try to extract suggested delay from error message
+                                    import re
+                                    delay_match = re.search(r'seconds: (\d+)', error_str)
+                                    if delay_match:
+                                        retry_delay = int(delay_match.group(1)) + 1
+                                except:
+                                    pass
+                            
+                            logger.warning(f"Quota limit hit, retrying in {retry_delay} seconds... (attempt {attempt + 1}/{max_retries})")
+                            time.sleep(retry_delay)
+                            continue
+                    raise e
+            else:
+                raise RuntimeError("Failed to generate content after all retry attempts")
             
             if response and response.text:
                 # Clean up the response text aggressively for pure description
