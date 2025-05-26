@@ -38,8 +38,14 @@ def index():
 def analyze_image():
     """Analyze an image and return a descriptive prompt."""
     try:
-        image_url = request.form.get('image_url', '').strip()
-        uploaded_file = request.files.get('image_file')
+        # Safely handle form data to prevent memory issues
+        try:
+            image_url = request.form.get('image_url', '').strip() if request.form else ''
+            uploaded_file = request.files.get('image_file') if request.files else None
+        except Exception as e:
+            logger.error(f"Error processing form data: {str(e)}")
+            flash('Error processing request. Please try again.', 'error')
+            return redirect(url_for('index'))
         
         # Validate input
         if not image_url and not uploaded_file:
@@ -92,8 +98,15 @@ def api_analyze_image():
     try:
         # Check if request contains JSON data with image URL
         if request.is_json:
-            data = request.get_json()
-            image_url = data.get('image_url', '').strip()
+            try:
+                data = request.get_json()
+                image_url = data.get('image_url', '').strip()
+            except Exception as e:
+                logger.error(f"Error parsing JSON: {str(e)}")
+                return jsonify({
+                    'success': False,
+                    'error': 'Invalid JSON data'
+                }), 400
             
             if not image_url:
                 return jsonify({
@@ -115,9 +128,16 @@ def api_analyze_image():
                     'error': 'Failed to analyze the image'
                 }), 500
         
-        # Handle file upload
-        elif 'image_file' in request.files:
-            uploaded_file = request.files['image_file']
+        # Handle file upload with memory protection
+        elif request.files and 'image_file' in request.files:
+            try:
+                uploaded_file = request.files['image_file']
+            except Exception as e:
+                logger.error(f"Error processing file upload: {str(e)}")
+                return jsonify({
+                    'success': False,
+                    'error': 'Error processing file upload'
+                }), 400
             
             if not uploaded_file or not uploaded_file.filename:
                 return jsonify({
@@ -131,12 +151,12 @@ def api_analyze_image():
                     'error': 'Invalid file type. Allowed: PNG, JPG, JPEG, GIF, WebP, BMP, TIFF, SVG, ICO, HEIC, HEIF, AVIF'
                 }), 400
             
-            # Save uploaded file temporarily
+            # Save uploaded file temporarily with memory protection
             filename = secure_filename(uploaded_file.filename)
             file_path = os.path.join(UPLOAD_FOLDER, f"{uuid.uuid4()}_{filename}")
-            uploaded_file.save(file_path)
             
             try:
+                uploaded_file.save(file_path)
                 logger.info(f"API: Analyzing uploaded image: {filename}")
                 prompt = analyzer.analyze_from_file(file_path)
                 
@@ -150,10 +170,19 @@ def api_analyze_image():
                         'success': False,
                         'error': 'Failed to analyze the image'
                     }), 500
+            except Exception as e:
+                logger.error(f"Error processing uploaded file: {str(e)}")
+                return jsonify({
+                    'success': False,
+                    'error': f'Error processing file: {str(e)}'
+                }), 500
             finally:
                 # Clean up temporary file
-                if os.path.exists(file_path):
-                    os.remove(file_path)
+                try:
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+                except Exception as e:
+                    logger.warning(f"Failed to clean up temporary file: {str(e)}")
         
         else:
             return jsonify({

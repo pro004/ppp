@@ -107,7 +107,7 @@ class ImageAnalyzer:
             raise ValueError(f"Invalid image URL: {str(e)}")
     
     def _download_image(self, url):
-        """Download and validate an image from URL."""
+        """Download and validate an image from URL with memory optimization."""
         try:
             self._validate_image_url(url)
             
@@ -123,20 +123,37 @@ class ImageAnalyzer:
                 'Referer': url,
             }
             
+            # Stream download with size limit to prevent memory issues
             response = requests.get(url, headers=headers, timeout=30, stream=True)
             response.raise_for_status()
             
-            # Load image to validate it
-            image = Image.open(BytesIO(response.content))
+            # Check content length to avoid downloading huge files
+            content_length = response.headers.get('content-length')
+            if content_length and int(content_length) > 32 * 1024 * 1024:  # 32MB limit
+                raise ValueError("Image file too large (>32MB)")
             
-            # Convert to RGB if necessary
+            # Download in chunks to control memory usage
+            content = BytesIO()
+            total_size = 0
+            for chunk in response.iter_content(chunk_size=8192):
+                total_size += len(chunk)
+                if total_size > 32 * 1024 * 1024:  # 32MB limit
+                    raise ValueError("Image file too large (>32MB)")
+                content.write(chunk)
+            
+            content.seek(0)
+            
+            # Load image with memory optimization
+            image = Image.open(content)
+            
+            # Convert to RGB if necessary and optimize size immediately
             if image.mode in ('RGBA', 'LA', 'P'):
                 image = image.convert('RGB')
             
-            # Check image size and optimize for Gemini
-            if image.size[0] > 4096 or image.size[1] > 4096:
-                # Resize if too large while maintaining aspect ratio
-                image.thumbnail((4096, 4096), Image.Resampling.LANCZOS)
+            # Optimize for Gemini - resize large images immediately to save memory
+            if image.size[0] > 2048 or image.size[1] > 2048:
+                # More aggressive resizing for memory efficiency
+                image.thumbnail((2048, 2048), Image.Resampling.LANCZOS)
             
             return image
             
@@ -146,21 +163,27 @@ class ImageAnalyzer:
             raise ValueError(f"Invalid image file: {str(e)}")
     
     def _load_image_from_file(self, file_path):
-        """Load and validate an image from file path."""
+        """Load and validate an image from file path with memory optimization."""
         try:
             if not os.path.exists(file_path):
                 raise ValueError("Image file does not exist")
             
+            # Check file size before loading to prevent memory issues
+            file_size = os.path.getsize(file_path)
+            if file_size > 32 * 1024 * 1024:  # 32MB limit
+                raise ValueError("Image file too large (>32MB)")
+            
+            # Load image with memory optimization
             image = Image.open(file_path)
             
-            # Convert to RGB if necessary
+            # Convert to RGB if necessary and optimize immediately
             if image.mode in ('RGBA', 'LA', 'P'):
                 image = image.convert('RGB')
             
-            # Check image size
-            if image.size[0] > 4096 or image.size[1] > 4096:
-                # Resize if too large
-                image.thumbnail((4096, 4096), Image.Resampling.LANCZOS)
+            # Optimize for Gemini - resize large images immediately to save memory
+            if image.size[0] > 2048 or image.size[1] > 2048:
+                # More aggressive resizing for memory efficiency
+                image.thumbnail((2048, 2048), Image.Resampling.LANCZOS)
             
             return image
             
