@@ -17,8 +17,8 @@ app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-prod
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Configuration
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp'}
+app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024  # 32MB max file size for better quality
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'tiff', 'tif', 'svg', 'ico', 'heic', 'heif', 'avif'}
 UPLOAD_FOLDER = tempfile.gettempdir()
 
 # Initialize the image analyzer
@@ -58,7 +58,7 @@ def analyze_image():
         
         elif uploaded_file and uploaded_file.filename:
             if not allowed_file(uploaded_file.filename):
-                flash('Invalid file type. Please upload PNG, JPG, JPEG, GIF, WebP, or BMP files only.', 'error')
+                flash('Invalid file type. Please upload PNG, JPG, JPEG, GIF, WebP, BMP, TIFF, SVG, ICO, HEIC, HEIF, or AVIF files only.', 'error')
                 return redirect(url_for('index'))
             
             # Save uploaded file temporarily
@@ -128,7 +128,7 @@ def api_analyze_image():
             if not allowed_file(uploaded_file.filename):
                 return jsonify({
                     'success': False,
-                    'error': 'Invalid file type. Allowed: PNG, JPG, JPEG, GIF, WebP, BMP'
+                    'error': 'Invalid file type. Allowed: PNG, JPG, JPEG, GIF, WebP, BMP, TIFF, SVG, ICO, HEIC, HEIF, AVIF'
                 }), 400
             
             # Save uploaded file temporarily
@@ -180,7 +180,7 @@ def health_check():
 @app.errorhandler(413)
 def too_large(e):
     """Handle file too large error."""
-    flash('File too large. Maximum size is 16MB.', 'error')
+    flash('File too large. Maximum size is 32MB.', 'error')
     return redirect(url_for('index'))
 
 @app.errorhandler(500)

@@ -44,14 +44,33 @@ class ImageAnalyzer:
             if not parsed.scheme or not parsed.netloc:
                 raise ValueError("Invalid URL format")
             
-            # Check if URL is accessible
-            response = requests.head(url, timeout=10, allow_redirects=True)
-            response.raise_for_status()
+            # Enhanced headers to work with more domains
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'DNT': '1',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
+            }
             
-            # Check content type
-            content_type = response.headers.get('content-type', '').lower()
-            if not content_type.startswith('image/'):
-                raise ValueError("URL does not point to an image")
+            # Try HEAD request first, fallback to GET if needed
+            try:
+                response = requests.head(url, headers=headers, timeout=15, allow_redirects=True)
+                response.raise_for_status()
+                
+                # Check content type from HEAD request
+                content_type = response.headers.get('content-type', '').lower()
+                if content_type and not any(img_type in content_type for img_type in ['image/', 'application/octet-stream']):
+                    # Some servers don't return proper content-type in HEAD, try GET
+                    response = requests.get(url, headers=headers, timeout=15, allow_redirects=True, stream=True)
+                    response.raise_for_status()
+                    
+            except requests.RequestException:
+                # Fallback to GET request if HEAD fails
+                response = requests.get(url, headers=headers, timeout=15, allow_redirects=True, stream=True)
+                response.raise_for_status()
             
             return True
             
@@ -65,7 +84,19 @@ class ImageAnalyzer:
         try:
             self._validate_image_url(url)
             
-            response = requests.get(url, timeout=30, stream=True)
+            # Enhanced headers for better compatibility
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'DNT': '1',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
+                'Referer': url,
+            }
+            
+            response = requests.get(url, headers=headers, timeout=30, stream=True)
             response.raise_for_status()
             
             # Load image to validate it
@@ -75,9 +106,9 @@ class ImageAnalyzer:
             if image.mode in ('RGBA', 'LA', 'P'):
                 image = image.convert('RGB')
             
-            # Check image size
+            # Check image size and optimize for Gemini
             if image.size[0] > 4096 or image.size[1] > 4096:
-                # Resize if too large
+                # Resize if too large while maintaining aspect ratio
                 image.thumbnail((4096, 4096), Image.Resampling.LANCZOS)
             
             return image
@@ -110,47 +141,98 @@ class ImageAnalyzer:
             raise ValueError(f"Failed to load image file: {str(e)}")
     
     def _generate_prompt(self, image):
-        """Generate a descriptive prompt for the given image using Gemini."""
+        """Generate a detailed, comprehensive prompt for the given image using Gemini."""
         if not self.is_configured():
             raise RuntimeError("Gemini API is not properly configured")
         
         try:
-            # Create a detailed prompt for better image analysis
+            # Enhanced system prompt for maximum detail and accuracy
             system_prompt = """
-            Analyze this image and create a detailed, descriptive prompt that captures:
-            1. The main subject(s) and their actions
-            2. The setting and environment
-            3. Visual style, lighting, and mood
-            4. Colors, composition, and artistic elements
-            5. Any notable details or objects
-            
-            Provide a clear, comprehensive description in 2-3 sentences that would help someone recreate or understand this image. Focus on being descriptive and accurate rather than interpretive.
+            Analyze this image with extreme detail and precision. Create the most comprehensive, accurate descriptive prompt possible that captures EVERY visual element. Include:
+
+            COMPOSITION & FRAMING:
+            - Camera angle, perspective, and framing (close-up, wide shot, etc.)
+            - Rule of thirds, symmetry, leading lines, depth of field
+            - Foreground, middle ground, and background elements
+
+            SUBJECTS & CHARACTERS:
+            - Detailed physical descriptions (age, gender, ethnicity, build, posture)
+            - Facial expressions, emotions, body language, gestures
+            - Clothing, accessories, hairstyles with specific details
+            - Actions, interactions, and positioning relative to each other
+
+            ENVIRONMENT & SETTING:
+            - Specific location type (indoor/outdoor, architectural style, landscape)
+            - Time of day, season, weather conditions
+            - Cultural or geographical context if evident
+            - Props, furniture, vehicles, and background objects
+
+            VISUAL STYLE & TECHNIQUE:
+            - Art style (realistic, cartoon, anime, painting, photography, 3D render)
+            - Technical aspects (resolution, grain, bokeh, HDR, filters)
+            - Artistic movement or influence if applicable
+
+            LIGHTING & ATMOSPHERE:
+            - Light source direction, intensity, and quality (soft/hard)
+            - Shadows, highlights, contrast levels
+            - Atmospheric effects (fog, haze, particles, reflections)
+            - Overall mood and emotional tone
+
+            COLOR & TEXTURE:
+            - Dominant color palette and specific color combinations
+            - Color temperature (warm/cool), saturation levels
+            - Material textures (smooth, rough, metallic, fabric, etc.)
+            - Transparency, opacity, and surface properties
+
+            FINE DETAILS:
+            - Text, symbols, logos, or writing visible in the image
+            - Small objects, patterns, decorative elements
+            - Quality indicators (sharp/blurry areas, artifacts)
+            - Any unique or unusual elements that stand out
+
+            Provide an extremely detailed, comprehensive description that would allow someone to recreate this image with maximum fidelity. Be precise, specific, and thorough while maintaining natural language flow.
             """
             
             start_time = time.time()
             
-            # Generate content using Gemini
+            # Generate content using Gemini with enhanced parameters
             response = self.model.generate_content([system_prompt, image])
             
             elapsed_time = time.time() - start_time
-            logger.info(f"Gemini API call completed in {elapsed_time:.2f} seconds")
+            logger.info(f"Enhanced Gemini API call completed in {elapsed_time:.2f} seconds")
             
             if response and response.text:
-                # Clean up the response text
+                # Clean up and enhance the response text
                 prompt = response.text.strip()
                 
-                # Remove any potential prefixes or formatting
+                # Remove any potential prefixes, suffixes, or formatting artifacts
                 if prompt.startswith('"') and prompt.endswith('"'):
                     prompt = prompt[1:-1]
                 
-                logger.info(f"Generated prompt: {prompt[:100]}...")
+                # Remove common AI response prefixes
+                prefixes_to_remove = [
+                    "Here's a detailed description of the image:",
+                    "This image shows:",
+                    "The image depicts:",
+                    "I can see:",
+                    "Looking at this image:",
+                ]
+                
+                for prefix in prefixes_to_remove:
+                    if prompt.lower().startswith(prefix.lower()):
+                        prompt = prompt[len(prefix):].strip()
+                
+                # Ensure proper formatting and flow
+                prompt = ' '.join(prompt.split())  # Normalize whitespace
+                
+                logger.info(f"Generated enhanced prompt: {prompt[:150]}...")
                 return prompt
             else:
                 logger.error("Empty response from Gemini API")
                 return None
                 
         except Exception as e:
-            logger.error(f"Error generating prompt with Gemini: {str(e)}")
+            logger.error(f"Error generating enhanced prompt with Gemini: {str(e)}")
             raise RuntimeError(f"Failed to analyze image: {str(e)}")
     
     def analyze_from_url(self, image_url):
