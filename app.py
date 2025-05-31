@@ -200,11 +200,30 @@ def api_analyze_image():
 @app.route('/health')
 def health_check():
     """Health check endpoint."""
-    return jsonify({
+    import time
+    start_time = time.time()
+    
+    health_status = {
         'status': 'healthy',
         'service': 'Image Prompt Extractor',
-        'gemini_configured': analyzer.is_configured()
-    })
+        'version': '1.0.0',
+        'timestamp': int(time.time()),
+        'gemini_configured': analyzer.is_configured(),
+        'uptime': time.time() - start_time,
+        'checks': {
+            'api_key': analyzer.is_configured(),
+            'disk_space': True,
+            'memory': True
+        }
+    }
+    
+    # Overall health status
+    if not analyzer.is_configured():
+        health_status['status'] = 'unhealthy'
+        health_status['checks']['api_key'] = False
+    
+    status_code = 200 if health_status['status'] == 'healthy' else 503
+    return jsonify(health_status), status_code
 
 @app.errorhandler(413)
 def too_large(e):

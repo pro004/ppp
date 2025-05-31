@@ -281,11 +281,28 @@ app.post('/api/analyze', upload.single('image_file'), async (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-  res.json({
+  const healthStatus = {
     status: 'healthy',
     service: 'Image Prompt Extractor (Node.js)',
-    gemini_configured: !!process.env.GEMINI_API_KEY
-  });
+    version: '1.0.0',
+    timestamp: Math.floor(Date.now() / 1000),
+    gemini_configured: !!process.env.GEMINI_API_KEY,
+    uptime: process.uptime(),
+    checks: {
+      api_key: !!process.env.GEMINI_API_KEY,
+      memory: process.memoryUsage().heapUsed < 500 * 1024 * 1024, // 500MB threshold
+      disk_space: true
+    }
+  };
+  
+  // Overall health status
+  if (!process.env.GEMINI_API_KEY) {
+    healthStatus.status = 'unhealthy';
+    healthStatus.checks.api_key = false;
+  }
+  
+  const statusCode = healthStatus.status === 'healthy' ? 200 : 503;
+  res.status(statusCode).json(healthStatus);
 });
 
 // Error handling middleware

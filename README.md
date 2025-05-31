@@ -323,15 +323,100 @@ The system provides extremely detailed analysis covering:
 
 ## 🧪 Testing
 
-Test the service with the provided example image:
+### Test with Example Image
+```bash
+curl -X POST https://your-deployment-url.com/api/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"image_url": "https://i.ibb.co/MkVH92j3/image.jpg"}'
 ```
-https://i.ibb.co/MkVH92j3/image.jpg
+
+### Test Deployment Script
+Use the included test script to verify your deployment:
+```bash
+python test-deployment.py https://your-app.onrender.com
 ```
+
+### Health Check
+Monitor your deployment with the health endpoint:
+```bash
+curl https://your-app.onrender.com/health
+```
+
+Expected response:
+```json
+{
+  "status": "healthy",
+  "service": "Image Prompt Extractor",
+  "version": "1.0.0",
+  "gemini_configured": true,
+  "uptime": 1234.56,
+  "checks": {
+    "api_key": true,
+    "disk_space": true,
+    "memory": true
+  }
+}
+```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+1. **"Gemini API not configured"**
+   - Check that `GEMINI_API_KEY` environment variable is set
+   - Verify the API key is valid at [Google AI Studio](https://aistudio.google.com/app/apikey)
+
+2. **"Failed to download image"**
+   - Ensure the image URL is publicly accessible
+   - Check that the image format is supported
+   - Verify the image size is under 32MB
+
+3. **"Rate limit exceeded"**
+   - The service has built-in rate limiting (15 requests/minute)
+   - Wait a minute before retrying
+
+4. **Deployment fails**
+   - Check that all required environment variables are set
+   - Verify the build and start commands are correct
+   - Review deployment logs for specific errors
+
+### Performance Optimization
+
+- Images are automatically resized to 2048x2048 for optimal processing
+- Rate limiting prevents quota exhaustion
+- Memory usage is optimized for large images
+- Temporary files are automatically cleaned up
+
+## 📊 Monitoring
+
+### Key Metrics to Monitor
+- Response time (should be 2-4 seconds)
+- Error rate (should be < 5%)
+- Memory usage (should stay under 500MB)
+- API key quota usage
+
+### Logging
+Both Python and Node.js versions include comprehensive logging:
+- Request/response logging
+- Error tracking
+- Performance metrics
+- API usage statistics
 
 ## 📄 License
 
-This project is ready for production use with proper API key configuration.
+MIT License - This project is ready for production use with proper API key configuration.
 
 ## 🤝 Support
 
-For issues or questions, ensure your Gemini API key is properly configured and check the health endpoint for service status.
+### Getting Help
+1. Check the health endpoint: `/health`
+2. Review the troubleshooting section above
+3. Verify your Gemini API key configuration
+4. Check deployment platform logs
+
+### Contributing
+Contributions are welcome! Please ensure:
+- API compatibility is maintained
+- Both Python and Node.js versions are updated
+- Tests pass successfully
+- Documentation is updated
