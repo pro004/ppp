@@ -1,6 +1,6 @@
 # Image Prompt Extractor
 
-A high-performance Flask web service that extracts detailed, accurate prompts from images using Google Gemini Vision AI. Get comprehensive visual descriptions without any unnecessary AI commentary - just pure, detailed image analysis.
+A high-performance web service that extracts detailed, accurate prompts from images using Google Gemini Vision AI. Available in both Flask (Python) and Express (Node.js) implementations. Get comprehensive visual descriptions without any unnecessary AI commentary - just pure, detailed image analysis.
 
 ## ✨ Features
 
@@ -13,7 +13,43 @@ A high-performance Flask web service that extracts detailed, accurate prompts fr
 - **Web Interface**: User-friendly interface for testing and manual analysis
 - **Large File Support**: Handles images up to 32MB
 
+## 🔑 Gemini API Key Setup
+
+**IMPORTANT**: This project requires a Google Gemini API key to function.
+
+### 1. Get Your API Key
+1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Sign in with your Google account
+3. Click "Create API Key"
+4. Copy your generated API key
+
+### 2. Configure the API Key
+Create a `.env` file in the project root and add your API key:
+```bash
+GEMINI_API_KEY=your_actual_api_key_here
+```
+
+Or set it as an environment variable:
+```bash
+export GEMINI_API_KEY="your_actual_api_key_here"
+```
+
 ## 🚀 Quick Start
+
+### Choose Your Implementation
+
+#### Option 1: Python/Flask (Default)
+```bash
+# The Flask server runs automatically on port 5000
+# Visit http://localhost:5000
+```
+
+#### Option 2: Node.js/Express
+```bash
+# Install Node.js dependencies (already installed)
+node server.js
+# Visit http://localhost:5000
+```
 
 ### API Usage
 
@@ -96,8 +132,26 @@ Health check endpoint.
 
 ### Environment Variables
 
-- `GEMINI_API_KEY`: Your Google Gemini API key (required)
+- `GEMINI_API_KEY`: Your Google Gemini API key (**REQUIRED** - Get from [Google AI Studio](https://aistudio.google.com/app/apikey))
 - `SESSION_SECRET`: Flask session secret (optional, auto-generated if not provided)
+- `PORT`: Server port (default: 5000)
+- `NODE_ENV`: Environment mode (development/production)
+
+### Available Implementations
+
+#### Flask (Python) - Default
+- **File**: `app.py` (via `main.py`)
+- **Start**: Automatically runs via workflow
+- **Port**: 5000
+- **Features**: Web interface + API endpoints
+
+#### Express (Node.js) - Alternative
+- **File**: `server.js`
+- **Start**: `node server.js`
+- **Port**: 5000
+- **Features**: Web interface + API endpoints
+
+Both implementations provide identical functionality and API compatibility.
 
 ### Supported Image Formats
 
