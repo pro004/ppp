@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: image-prompt-extractor
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT main:app
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+    plan: free

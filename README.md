@@ -153,6 +153,122 @@ Health check endpoint.
 
 Both implementations provide identical functionality and API compatibility.
 
+## 🚀 Deployment Guide
+
+### Deploy to Render (Recommended)
+
+Render provides free hosting for both Python and Node.js applications with easy deployment.
+
+#### Method 1: Deploy Python/Flask Version
+
+1. **Fork or Clone** this repository to your GitHub account
+
+2. **Create a Render Account**
+   - Visit [render.com](https://render.com)
+   - Sign up with your GitHub account
+
+3. **Create a New Web Service**
+   - Click "New +" → "Web Service"
+   - Connect your GitHub repository
+   - Choose the repository containing this project
+
+4. **Configure the Service**
+   - **Name**: `image-prompt-extractor`
+   - **Environment**: `Python 3`
+   - **Build Command**: `pip install -r requirements.txt` (leave empty if using pyproject.toml)
+   - **Start Command**: `gunicorn --bind 0.0.0.0:$PORT main:app`
+   - **Instance Type**: `Free`
+
+5. **Add Environment Variables**
+   - Go to "Environment" tab
+   - Add `GEMINI_API_KEY` with your API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+   - Add `SESSION_SECRET` (or let Render auto-generate it)
+
+6. **Deploy**
+   - Click "Create Web Service"
+   - Wait for deployment to complete (5-10 minutes)
+   - Your app will be available at `https://your-app-name.onrender.com`
+
+#### Method 2: Deploy Node.js Version
+
+1. **Modify package.json** (create if needed):
+   ```json
+   {
+     "name": "image-prompt-extractor",
+     "version": "1.0.0",
+     "main": "server.js",
+     "scripts": {
+       "start": "node server.js"
+     },
+     "engines": {
+       "node": "18.x"
+     }
+   }
+   ```
+
+2. **Configure Render**
+   - **Environment**: `Node`
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+
+3. **Environment Variables**: Same as Python version
+
+#### Method 3: Using render.yaml (Infrastructure as Code)
+
+Create `render.yaml` in your repository root:
+```yaml
+services:
+  - type: web
+    name: image-prompt-extractor
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT main:app
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+    plan: free
+```
+
+Then deploy by connecting your repository to Render.
+
+### Deploy to Other Platforms
+
+#### Heroku
+1. Create `Procfile`: `web: gunicorn --bind 0.0.0.0:$PORT main:app`
+2. Set `GEMINI_API_KEY` environment variable
+3. Deploy via Git or GitHub integration
+
+#### Railway
+1. Connect GitHub repository
+2. Set environment variables in dashboard
+3. Railway auto-detects Python/Node.js
+
+#### Vercel (Node.js only)
+1. Install Vercel CLI: `npm i -g vercel`
+2. Run `vercel` in project directory
+3. Set environment variables in dashboard
+
+#### Google Cloud Run
+1. Create `Dockerfile`:
+   ```dockerfile
+   FROM python:3.11-slim
+   WORKDIR /app
+   COPY requirements.txt .
+   RUN pip install -r requirements.txt
+   COPY . .
+   CMD gunicorn --bind 0.0.0.0:$PORT main:app
+   ```
+2. Deploy with: `gcloud run deploy`
+
+### Environment Variables for Production
+
+Required for all deployments:
+- `GEMINI_API_KEY`: Your Google Gemini API key (get from [Google AI Studio](https://aistudio.google.com/app/apikey))
+- `PORT`: Automatically set by most platforms
+- `SESSION_SECRET`: Random string for Flask sessions (auto-generated on most platforms)
+
 ### Supported Image Formats
 
 - **Raster**: PNG, JPG, JPEG, GIF, WebP, BMP, TIFF, HEIC, HEIF, AVIF
