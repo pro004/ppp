@@ -82,12 +82,12 @@ class SimpleImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            prompt = """Describe this image in exactly 3 sentences focusing on essential visual facts:
-- Main subjects: precise positioning, poses, key physical details
-- Objects: exact locations, materials, colors, spatial relationships  
-- Composition: viewpoint, lighting direction, depth
+            prompt = """Analyze this image with forensic precision. Describe in exactly 3 sentences:
+1. Subject positioning: exact body positions, orientations, angles, gestures, spatial relationships between subjects
+2. Object placement: precise locations (foreground/middle/background), sizes, materials, colors, how objects relate spatially
+3. Camera perspective: exact viewing angle (low/eye-level/high), distance (close/medium/far), lighting direction and quality
 
-Be concise and accurate. Skip unnecessary descriptive words. Focus on what, where, how positioned."""
+Report only observable facts. Use precise spatial terms: left/right, above/below, in front/behind, angled toward/away."""
             
             payload = {
                 "contents": [{
@@ -102,10 +102,10 @@ Be concise and accurate. Skip unnecessary descriptive words. Focus on what, wher
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.3,
-                    "topK": 15,
-                    "topP": 0.7,
-                    "maxOutputTokens": 120
+                    "temperature": 0.1,
+                    "topK": 10,
+                    "topP": 0.6,
+                    "maxOutputTokens": 150
                 }
             }
             
