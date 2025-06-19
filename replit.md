@@ -95,7 +95,7 @@ The Image Prompt Extractor is a web service that analyzes images and generates d
 - June 19, 2025: Initial setup
 - June 19, 2025: Fixed system dependency issues and created simplified image analyzer
 - June 19, 2025: Updated web interface layout for side-by-side image and prompt display
-- June 19, 2025: Optimized prompt generation for medium-length, focused descriptions
+- June 19, 2025: Optimized prompt generation for balanced detail (3-4 sentences, ~80-90 words)
 
 ## User Preferences
 
