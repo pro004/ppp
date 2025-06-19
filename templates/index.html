@@ -31,11 +31,22 @@
                 <div class="row justify-content-center mb-4">
                     <div class="col-lg-8">
                         {% for category, message in messages %}
-                            <div class="alert alert-{% if category == 'error' %}danger{% elif category == 'success' %}success{% else %}info{% endif %} alert-dismissible fade show" role="alert">
-                                <i class="fas fa-{% if category == 'error' %}exclamation-triangle{% elif category == 'success' %}check-circle{% else %}info-circle{% endif %} me-2"></i>
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
+                            {% if category == 'prompt' %}
+                                <div class="alert alert-info alert-dismissible fade show" role="alert" style="border-left: 4px solid #0d6efd;">
+                                    <i class="fas fa-quote-left me-2"></i>
+                                    <strong>Generated Prompt:</strong>
+                                    <div class="mt-2 p-3" style="background-color: rgba(13, 110, 253, 0.1); border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6;">
+                                        {{ message }}
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-{% if category == 'error' %}danger{% elif category == 'success' %}success{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-{% if category == 'error' %}exclamation-triangle{% elif category == 'success' %}check-circle{% else %}info-circle{% endif %} me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>

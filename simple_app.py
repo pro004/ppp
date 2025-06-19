@@ -11,7 +11,7 @@ import base64
 import io
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Create the Flask app
@@ -222,10 +222,14 @@ def analyze_image():
         
         # Handle result
         if result.get('success'):
-            flash(f"Analysis complete! Generated prompt: {result['prompt']}", 'success')
+            prompt = result['prompt']
+            # Show the result in a more user-friendly way
+            flash(f"🎯 Analysis Complete! Here's your detailed prompt:", 'success')
+            flash(prompt, 'prompt')  # Use a special category for the actual prompt
+            logger.info(f"Successfully generated prompt: {prompt[:100]}...")
         else:
             error_msg = result.get('error', 'Unknown error occurred during analysis')
-            flash(f"Analysis failed: {error_msg}", 'error')
+            flash(f"❌ Analysis failed: {error_msg}", 'error')
             logger.error(f"Analysis failed: {error_msg}")
         
         return redirect(url_for('index'))
