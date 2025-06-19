@@ -82,14 +82,12 @@ class SimpleImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            prompt = """Analyze this image and provide a detailed, comprehensive description. Focus on:
-- Main subjects and objects
-- Visual style, colors, lighting
-- Composition and perspective  
-- Mood and atmosphere
-- Important details and context
+            prompt = """Create a concise yet detailed description of this image in 2-3 sentences. Focus on:
+- Main subjects and key visual elements
+- Dominant colors, lighting, and style
+- Composition and mood
 
-Provide only the description without any prefixes like "This image shows" or "The image depicts"."""
+Be specific and vivid but keep it focused and medium-length. Avoid prefixes like "This image shows"."""
             
             payload = {
                 "contents": [{
@@ -104,10 +102,10 @@ Provide only the description without any prefixes like "This image shows" or "Th
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.7,
-                    "topK": 40,
-                    "topP": 0.95,
-                    "maxOutputTokens": 2048
+                    "temperature": 0.6,
+                    "topK": 30,
+                    "topP": 0.9,
+                    "maxOutputTokens": 150
                 }
             }
             
