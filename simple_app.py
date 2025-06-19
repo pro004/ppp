@@ -162,7 +162,11 @@ analyzer = SimpleImageAnalyzer()
 @app.route('/')
 def index():
     """Render the main page with the image upload form."""
-    return render_template('index.html')
+    result = request.args.get('result')
+    prompt = request.args.get('prompt')
+    error = request.args.get('error')
+    
+    return render_template('index.html', result=result, prompt=prompt, error=error)
 
 @app.route('/analyze', methods=['POST'])
 def analyze_image():
@@ -220,19 +224,15 @@ def analyze_image():
             flash('No valid image provided.', 'error')
             return redirect(url_for('index'))
         
-        # Handle result
+        # Handle result - use URL parameters instead of flash messages for reliability
         if result.get('success'):
             prompt = result['prompt']
-            # Show the result in a more user-friendly way
-            flash(f"🎯 Analysis Complete! Here's your detailed prompt:", 'success')
-            flash(prompt, 'prompt')  # Use a special category for the actual prompt
             logger.info(f"Successfully generated prompt: {prompt[:100]}...")
+            return redirect(url_for('index', result='success', prompt=prompt))
         else:
             error_msg = result.get('error', 'Unknown error occurred during analysis')
-            flash(f"❌ Analysis failed: {error_msg}", 'error')
             logger.error(f"Analysis failed: {error_msg}")
-        
-        return redirect(url_for('index'))
+            return redirect(url_for('index', result='error', error=error_msg))
         
     except Exception as e:
         logger.error(f"Unexpected error in analyze_image: {str(e)}")
