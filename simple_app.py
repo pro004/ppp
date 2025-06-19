@@ -82,13 +82,12 @@ class SimpleImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            prompt = """Analyze this image with maximum accuracy and provide a precise, detailed description in exactly 3-4 sentences. Be extremely specific about:
-- Every visible subject: exact appearance, facial features, clothing, poses, interactions
-- All objects and elements: materials, textures, colors, sizes, positions
-- Lighting: direction, quality, shadows, highlights, color temperature
-- Composition: camera angle, depth of field, perspective, artistic style
+            prompt = """Describe this image in exactly 3 sentences focusing on essential visual facts:
+- Main subjects: precise positioning, poses, key physical details
+- Objects: exact locations, materials, colors, spatial relationships  
+- Composition: viewpoint, lighting direction, depth
 
-Focus on factual visual details with high precision. No generic descriptions or AI prefixes."""
+Be concise and accurate. Skip unnecessary descriptive words. Focus on what, where, how positioned."""
             
             payload = {
                 "contents": [{
@@ -103,10 +102,10 @@ Focus on factual visual details with high precision. No generic descriptions or 
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.4,
-                    "topK": 20,
-                    "topP": 0.8,
-                    "maxOutputTokens": 180
+                    "temperature": 0.3,
+                    "topK": 15,
+                    "topP": 0.7,
+                    "maxOutputTokens": 120
                 }
             }
             
