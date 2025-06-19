@@ -224,11 +224,16 @@ def analyze_image():
             flash('No valid image provided.', 'error')
             return redirect(url_for('index'))
         
-        # Handle result - use URL parameters instead of flash messages for reliability
+        # Handle result - use URL parameters and include image reference
         if result.get('success'):
             prompt = result['prompt']
             logger.info(f"Successfully generated prompt: {prompt[:100]}...")
-            return redirect(url_for('index', result='success', prompt=prompt))
+            
+            # Pass image URL if it was used
+            if image_url:
+                return redirect(url_for('index', result='success', prompt=prompt, image_url=image_url))
+            else:
+                return redirect(url_for('index', result='success', prompt=prompt))
         else:
             error_msg = result.get('error', 'Unknown error occurred during analysis')
             logger.error(f"Analysis failed: {error_msg}")
