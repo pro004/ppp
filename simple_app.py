@@ -33,7 +33,7 @@ class SimpleImageAnalyzer:
     """Simple image analyzer that works without heavy dependencies."""
     
     def __init__(self):
-        self.api_key = os.environ.get("GEMINI_API_KEY")
+        self.api_key = os.environ.get("GEMINI_API_KEY", "AIzaSyDaBBWSgg0NnzLvh0m-N9Jhy1i-CuzUhV4")
         
     def is_configured(self):
         """Check if API key is available."""
