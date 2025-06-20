@@ -13,11 +13,11 @@ class OptimizedImageAnalyzer:
     
     def __init__(self):
         """Initialize with API key."""
-        self.api_key = os.environ.get("GEMINI_API_KEY")
+        self.api_key = os.environ.get("GEMINI_API_KEY") or "AIzaSyCfdO3Mp0rwzgmtQFWMyxyCO6M6wFQMGIY"
         if not self.api_key or self.api_key.strip() == "":
             logger.warning("GEMINI_API_KEY not configured - image analysis will not work")
         else:
-            logger.info("Optimized analyzer initialized successfully")
+            logger.info("Optimized analyzer initialized successfully with API key")
     
     def is_configured(self):
         """Check if API key is available."""
