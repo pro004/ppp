@@ -71,14 +71,8 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Direct anime tag generation
-            prompt = """Generate anime/manga booru tags for this image. Count characters carefully and list in exact comma-separated format:
-
-1girl, 1boy, duo, [character_name if recognizable], [clothing_details with colors], [hair_color], [hair_length], [hair_style], [eye_color], [facial_features], [body_parts_visible], [pose/expression], [setting], [background_elements]
-
-Examples: 1girl, kanroji_mitsuri, solo, green_bikini, pink_hair, long_hair, twin_braids, green_eyes, mole_under_eye, navel, looking_at_viewer, beach, blue_sky
-
-Be precise with character count (1girl+1boy=duo, not solo). Include specific details like mole_under_eye, arms_behind_back, looking_at_viewer. Use underscores in multi-word tags."""
+            # Natural image description as tags
+            prompt = """Describe exactly what you see in this image using comma-separated anime/manga style tags. Just list what's actually there - people, clothing, colors, poses, setting, objects. Don't add anything that's not clearly visible. Keep it under 700 characters."""
             
             payload = {
                 "contents": [{
@@ -93,10 +87,10 @@ Be precise with character count (1girl+1boy=duo, not solo). Include specific det
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.05,
-                    "topK": 5,
-                    "topP": 0.3,
-                    "maxOutputTokens": 300
+                    "temperature": 0.2,
+                    "topK": 20,
+                    "topP": 0.8,
+                    "maxOutputTokens": 200
                 }
             }
             
@@ -109,18 +103,15 @@ Be precise with character count (1girl+1boy=duo, not solo). Include specific det
             if 'candidates' in result and result['candidates']:
                 text = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
-                # Extract only the tag content
-                import re
-                
-                # Remove instruction prefixes
+                # Simple cleaning for natural descriptions
                 prefixes = [
-                    "Generate anime/manga booru tags for this image.",
-                    "Count characters carefully and list in exact comma-separated format:",
-                    "Examples:",
-                    "Be precise with character count",
-                    "Include specific details",
-                    "Use underscores in multi-word tags.",
-                    "**Tags:**",
+                    "Describe exactly what you see in this image using comma-separated anime/manga style tags.",
+                    "Just list what's actually there",
+                    "Don't add anything that's not clearly visible.",
+                    "Keep it under 700 characters.",
+                    "Here's what I see:",
+                    "I can see:",
+                    "The image shows:",
                     "Tags:",
                 ]
                 
@@ -128,25 +119,6 @@ Be precise with character count (1girl+1boy=duo, not solo). Include specific det
                     if text.lower().startswith(prefix.lower()):
                         text = text[len(prefix):].strip()
                         break
-                
-                # Remove example lines and instructions
-                lines = text.split('\n')
-                clean_lines = []
-                
-                for line in lines:
-                    line = line.strip()
-                    # Skip examples and instruction lines
-                    if any(skip in line.lower() for skip in [
-                        'example', '[character_name', 'kanroji_mitsuri', 'green_bikini',
-                        'be precise', 'include specific', 'use underscores'
-                    ]):
-                        continue
-                    
-                    # Keep actual tag lines
-                    if line and (',' in line or any(tag in line for tag in ['1girl', '1boy', 'solo', 'duo'])):
-                        clean_lines.append(line)
-                
-                text = ' '.join(clean_lines) if clean_lines else text
                 
                 # Clean and format
                 text = text.replace('**', '').replace('*', '').replace('##', '')
