@@ -71,8 +71,20 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Detailed anime/manga style prompt generation
-            prompt = """Generate a detailed anime/manga image prompt using comma-separated tags. Include: 1) number+gender (1girl/1boy), 2) character name if recognizable, 3) solo/group, 4) clothing details (swimsuit/uniform/dress type, colors), 5) physical features (eye color, hair color, hair length, hair style like braids/twin_tails), 6) facial features (mole, expression), 7) body parts visible (navel, upper_body, etc), 8) pose/action (looking_at_viewer, arms_behind_back), 9) setting (beach/outdoors/indoors), 10) background details (sky, ocean, clouds). Use specific anime terminology and be very detailed."""
+            # Ultra-detailed anime/manga prompt with precise positioning
+            prompt = """Create an anime/manga image prompt with comma-separated tags. Be extremely detailed and precise:
+1. Subject count: 1girl, 1boy, etc.
+2. Character name if anime character (like kanroji_mitsuri, nezuko_kamado, etc.)
+3. Group status: solo, group
+4. Clothing: exact type (bikini, swimsuit, school_uniform, dress), colors (green_bikini, red_dress)
+5. Hair: color (pink_hair, black_hair), length (long_hair, short_hair), style (twin_braids, ponytail, twin_tails)
+6. Eyes: color (green_eyes, red_eyes, blue_eyes)
+7. Body features: mole_under_eye, navel, upper_body, full_body
+8. Expression: looking_at_viewer, closed_mouth, open_mouth, smile
+9. Pose: arms_behind_back, arms_up, hand_on_hip
+10. Setting: beach, outdoors, indoors, day, night
+11. Background: blue_sky, ocean, clouds, water, trees
+Be very specific about positioning and details like "mole under eye" not just "mole"."""
             
             payload = {
                 "contents": [{
@@ -87,10 +99,10 @@ class OptimizedImageAnalyzer:
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.03,
-                    "topK": 5,
-                    "topP": 0.4,
-                    "maxOutputTokens": 200
+                    "temperature": 0.01,
+                    "topK": 3,
+                    "topP": 0.3,
+                    "maxOutputTokens": 250
                 }
             }
             
@@ -103,18 +115,20 @@ class OptimizedImageAnalyzer:
             if 'candidates' in result and result['candidates']:
                 text = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
-                # Clean anime/manga prompt format
+                # Clean anime/manga prompt format - preserve underscores in tags
                 prefixes = [
+                    "Create an anime/manga image prompt with comma-separated tags.",
+                    "Here's an anime/manga image prompt:",
                     "Here's an image prompt:",
                     "Here's a description:",
                     "Image prompt:",
                     "Prompt:",
                     "Tags:",
-                    "Generate an image prompt in this exact format:",
                     "**",
                     "*",
                     "Here is the prompt:",
                     "The prompt is:",
+                    "Be extremely detailed and precise:",
                 ]
                 
                 for prefix in prefixes:
@@ -122,14 +136,18 @@ class OptimizedImageAnalyzer:
                         text = text[len(prefix):].strip()
                         break
                 
-                # Clean markdown and normalize for tag format
+                # Clean but preserve anime tag structure
                 text = text.replace('**', '').replace('*', '').replace('##', '')
-                text = text.replace(', and ', ', ').replace(' and ', ', ')
-                text = text.replace('with ', '').replace(' with', '')
-                text = text.replace(' in ', ', ').replace(' on ', ', ')
+                text = text.replace(' and ', ', ').replace('; ', ', ')
                 
-                # Ensure comma-separated format
-                text = text.replace('; ', ', ').replace(': ', ', ')
+                # Fix common spacing issues in anime tags
+                text = text.replace(' _', '_').replace('_ ', '_')  # Fix underscores
+                text = text.replace(' hair', '_hair').replace(' eyes', '_eyes')
+                text = text.replace(' body', '_body').replace(' mouth', '_mouth')
+                text = text.replace(' viewer', '_viewer').replace(' back', '_back')
+                text = text.replace(' sky', '_sky').replace(' under eye', '_under_eye')
+                
+                # Normalize spacing
                 text = ' '.join(text.split())
                 
                 # Remove trailing punctuation
