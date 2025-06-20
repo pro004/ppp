@@ -71,8 +71,8 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Ultra-concise prompt for essential details only
-            prompt = """Describe concisely: main subject, key objects, colors, setting, style. Keep under 120 words, no fluff."""
+            # Anime/manga style prompt generation
+            prompt = """Generate an image prompt in this exact format: number+gender, character_name (if recognizable), solo/group, main_clothing, distinctive_features, hair_details, pose/action, setting, background_elements. Use comma-separated tags like: 1girl, character_name, solo, outfit_type, eye_color, hair_color, hair_style, pose, location, background. Be precise and detailed but concise."""
             
             payload = {
                 "contents": [{
@@ -87,10 +87,10 @@ class OptimizedImageAnalyzer:
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.1,
-                    "topK": 10,
-                    "topP": 0.6,
-                    "maxOutputTokens": 120
+                    "temperature": 0.05,
+                    "topK": 8,
+                    "topP": 0.5,
+                    "maxOutputTokens": 150
                 }
             }
             
@@ -103,29 +103,18 @@ class OptimizedImageAnalyzer:
             if 'candidates' in result and result['candidates']:
                 text = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
-                # Ultra-aggressive cleaning for maximum conciseness
+                # Clean anime/manga prompt format
                 prefixes = [
-                    "Here's a description of the image:",
-                    "Here's a detailed description of the image:",
-                    "Here's a detailed description:",
+                    "Here's an image prompt:",
                     "Here's a description:",
-                    "This image shows:",
-                    "This image depicts:",
-                    "The image shows:",
-                    "The image depicts:",
-                    "I can see:",
-                    "Looking at this image:",
-                    "In this image:",
-                    "The scene shows:",
-                    "This shows:",
-                    "**Description:**",
-                    "Description:",
-                    "Subjects:",
-                    "Main subject:",
-                    "Key objects:",
-                    "Colors:",
-                    "Setting:",
-                    "Style:",
+                    "Image prompt:",
+                    "Prompt:",
+                    "Tags:",
+                    "Generate an image prompt in this exact format:",
+                    "**",
+                    "*",
+                    "Here is the prompt:",
+                    "The prompt is:",
                 ]
                 
                 for prefix in prefixes:
@@ -133,43 +122,38 @@ class OptimizedImageAnalyzer:
                         text = text[len(prefix):].strip()
                         break
                 
-                # Remove all markdown, extra punctuation, and filler words
+                # Clean markdown and normalize for tag format
                 text = text.replace('**', '').replace('*', '').replace('##', '')
-                text = text.replace(' and ', ', ').replace(' with ', ', ')
-                text = text.replace(' that ', ' ').replace(' which ', ' ')
-                text = text.replace(' appears to be ', ' ').replace(' seems to be ', ' ')
-                text = text.replace(' can be seen ', ' ').replace(' is visible ', ' ')
-                text = text.replace(' there is ', ' ').replace(' there are ', ' ')
+                text = text.replace(', and ', ', ').replace(' and ', ', ')
+                text = text.replace('with ', '').replace(' with', '')
+                text = text.replace(' in ', ', ').replace(' on ', ', ')
+                
+                # Ensure comma-separated format
+                text = text.replace('; ', ', ').replace(': ', ', ')
                 text = ' '.join(text.split())
                 
-                # Remove trailing period
-                if text.endswith('.'):
-                    text = text[:-1]
+                # Remove trailing punctuation
+                text = text.rstrip('.,;:')
                 
-                # Strict truncation to stay well under 700 characters
+                # Strict truncation for anime tag format - cut at comma boundaries
                 if len(text) > 650:
-                    # Try to cut at sentence boundary
-                    sentences = text.split('. ')
-                    if len(sentences) > 1:
-                        truncated = sentences[0]
-                        for sentence in sentences[1:]:
-                            if len(truncated + '. ' + sentence) <= 645:
-                                truncated += '. ' + sentence
-                            else:
-                                break
-                        text = truncated
-                    else:
-                        # Cut at word boundary if no sentences
-                        words = text.split()
-                        truncated = []
-                        char_count = 0
-                        for word in words:
-                            if char_count + len(word) + 1 <= 645:
-                                truncated.append(word)
-                                char_count += len(word) + 1
-                            else:
-                                break
-                        text = ' '.join(truncated)
+                    # Split by commas to preserve tag structure
+                    tags = text.split(', ')
+                    truncated_tags = []
+                    char_count = 0
+                    
+                    for tag in tags:
+                        tag = tag.strip()
+                        # Calculate length including comma separator
+                        tag_length = len(tag) + (2 if truncated_tags else 0)  # +2 for ", "
+                        
+                        if char_count + tag_length <= 645:
+                            truncated_tags.append(tag)
+                            char_count += tag_length
+                        else:
+                            break
+                    
+                    text = ', '.join(truncated_tags)
                 
                 # Final character count check
                 logger.info(f"Final prompt length: {len(text)} characters")
