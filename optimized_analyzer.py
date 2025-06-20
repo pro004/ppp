@@ -71,26 +71,29 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Comprehensive anime/manga tag prompt
-            prompt = """Analyze this image and create a detailed anime/manga booru-style tag list. Include ALL visible elements in comma-separated format:
+            # Precise anime/manga tag analysis
+            prompt = """Carefully count and analyze this image to create accurate anime/manga booru tags:
 
-MANDATORY TAGS (in order):
-- Character count (1girl, 2girls, 1boy, etc.)
-- Character name if recognizable from anime/manga
-- Group status (solo, duo, group)
-- Clothing items with colors (green_bikini, white_shirt, school_uniform, etc.)
-- Hair details (pink_hair, long_hair, twin_braids, gradient_hair, multicolored_hair)
-- Eye details (green_eyes, blue_eyes, red_eyes)
-- Facial features (mole_under_eye, smile, closed_mouth, open_mouth)
+STEP 1: COUNT CHARACTERS PRECISELY
+- Count each distinct person/character visible
+- Use exact numbers: 1girl, 1boy, 2girls, etc.
+- If both male and female: list separately (1girl, 1boy)
+
+STEP 2: CREATE DETAILED TAG LIST
+Include in comma-separated format:
+- Exact character count (be very careful with counting)
+- Character names if recognizable from anime/manga
+- Group status (solo if 1 person, duo if 2, group if 3+)
+- Clothing with colors (green_bikini, white_shirt, school_uniform)
+- Hair details (pink_hair, long_hair, twin_braids, multicolored_hair)
+- Eye colors (green_eyes, blue_eyes, red_eyes)
+- Facial features (mole_under_eye, smile, closed_mouth)
 - Body visibility (upper_body, full_body, navel)
-- Pose/action (looking_at_viewer, arms_behind_back, hand_on_hip, sitting, standing)
-- Camera angle (from_above, from_side, close-up)
-- Setting/location (beach, outdoors, indoors, classroom, bedroom)
-- Time/lighting (day, night, sunlight, sunset)
-- Background elements (blue_sky, ocean, clouds, trees, water)
-- Art style if applicable (anime_style, realistic, etc.)
+- Poses/actions (looking_at_viewer, arms_behind_back, sitting)
+- Setting (beach, outdoors, indoors, bedroom)
+- Background (blue_sky, ocean, clouds, water)
 
-Generate at least 20-30 detailed tags covering everything visible. Be extremely specific."""
+CRITICAL: Double-check character count before generating tags. Be accurate about how many people are in the image."""
             
             payload = {
                 "contents": [{
@@ -105,9 +108,9 @@ Generate at least 20-30 detailed tags covering everything visible. Be extremely 
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.1,
-                    "topK": 10,
-                    "topP": 0.5,
+                    "temperature": 0.05,
+                    "topK": 5,
+                    "topP": 0.3,
                     "maxOutputTokens": 300
                 }
             }
@@ -121,18 +124,18 @@ Generate at least 20-30 detailed tags covering everything visible. Be extremely 
             if 'candidates' in result and result['candidates']:
                 text = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
-                # Clean booru-style tag formatting
+                # Clean step-by-step analysis format
                 prefixes = [
-                    "Analyze this image and create a detailed anime/manga booru-style tag list.",
-                    "Include ALL visible elements in comma-separated format:",
-                    "MANDATORY TAGS (in order):",
-                    "Generate at least 20-30 detailed tags covering everything visible.",
-                    "Here's an anime/manga booru-style tag list:",
-                    "Here's a detailed tag list:",
+                    "Carefully count and analyze this image to create accurate anime/manga booru tags:",
+                    "STEP 1: COUNT CHARACTERS PRECISELY",
+                    "STEP 2: CREATE DETAILED TAG LIST",
+                    "Include in comma-separated format:",
+                    "CRITICAL: Double-check character count before generating tags.",
+                    "Here's the accurate tag list:",
                     "Tags:",
                     "**",
                     "*",
-                    "Be extremely specific.",
+                    "Be accurate about how many people are in the image.",
                 ]
                 
                 # Remove prefixes and clean text
@@ -141,22 +144,32 @@ Generate at least 20-30 detailed tags covering everything visible. Be extremely 
                         text = text[len(prefix):].strip()
                         break
                 
-                # Clean markdown and format for proper tag structure
+                # Clean step-by-step format and extract tag portion
                 text = text.replace('**', '').replace('*', '').replace('##', '')
-                text = text.replace('- ', '').replace('\n', ', ')  # Convert bullet points to commas
-                text = text.replace('; ', ', ').replace(': ', ', ')
+                text = text.replace('- ', '').replace('\n', ', ')
                 
-                # Ensure proper anime tag formatting
+                # Remove step indicators and explanatory text
+                text = text.replace('Step 1:', '').replace('Step 2:', '')
+                text = text.replace('Count:', '').replace('Analysis:', '')
+                text = text.replace('Character count:', '').replace('Characters:', '')
+                
+                # Clean separators
+                text = text.replace('; ', ', ').replace(': ', ', ')
+                text = text.replace(' and ', ', ')
+                
+                # Ensure proper anime tag formatting with underscores
                 text = text.replace(' hair', '_hair').replace(' eyes', '_eyes')
                 text = text.replace(' body', '_body').replace(' mouth', '_mouth')
                 text = text.replace(' viewer', '_viewer').replace(' back', '_back')
                 text = text.replace(' sky', '_sky').replace(' under eye', '_under_eye')
                 text = text.replace(' behind back', '_behind_back')
                 text = text.replace(' at viewer', '_at_viewer')
+                text = text.replace('looking at', 'looking_at')
+                text = text.replace('arms behind', 'arms_behind')
                 
-                # Clean extra spaces and normalize
+                # Clean multiple commas and spaces
                 text = ' '.join(text.split())
-                text = text.replace(' ,', ',').replace(',,', ',')
+                text = text.replace(' ,', ',').replace(',,', ',').replace(', ,', ',')
                 
                 # Remove trailing punctuation
                 text = text.strip().rstrip('.,;:')
