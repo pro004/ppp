@@ -13,7 +13,7 @@ class OptimizedImageAnalyzer:
     
     def __init__(self):
         """Initialize with API key."""
-        self.api_key = os.environ.get("GEMINI_API_KEY") or "AIzaSyCfdO3Mp0rwzgmtQFWMyxyCO6M6wFQMGIY"
+        self.api_key = "AIzaSyCfdO3Mp0rwzgmtQFWMyxyCO6M6wFQMGIY"
         if not self.api_key or self.api_key.strip() == "":
             logger.warning("GEMINI_API_KEY not configured - image analysis will not work")
         else:
@@ -71,8 +71,8 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Streamlined prompt for focused descriptions
-            prompt = """Describe: subjects (age, gender, hair, expression, pose, clothing), objects (position left/right/center/foreground/background, colors, materials), environment (lighting, setting), colors, composition (angle, depth), then art style. Be precise and concise."""
+            # Ultra-concise prompt for essential details only
+            prompt = """Describe concisely: main subject, key objects, colors, setting, style. Keep under 120 words, no fluff."""
             
             payload = {
                 "contents": [{
@@ -87,10 +87,10 @@ class OptimizedImageAnalyzer:
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.15,
-                    "topK": 15,
-                    "topP": 0.7,
-                    "maxOutputTokens": 180
+                    "temperature": 0.1,
+                    "topK": 10,
+                    "topP": 0.6,
+                    "maxOutputTokens": 120
                 }
             }
             
@@ -103,7 +103,7 @@ class OptimizedImageAnalyzer:
             if 'candidates' in result and result['candidates']:
                 text = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
-                # Aggressive cleaning to ensure under 700 characters
+                # Ultra-aggressive cleaning for maximum conciseness
                 prefixes = [
                     "Here's a description of the image:",
                     "Here's a detailed description of the image:",
@@ -121,6 +121,11 @@ class OptimizedImageAnalyzer:
                     "**Description:**",
                     "Description:",
                     "Subjects:",
+                    "Main subject:",
+                    "Key objects:",
+                    "Colors:",
+                    "Setting:",
+                    "Style:",
                 ]
                 
                 for prefix in prefixes:
@@ -128,22 +133,27 @@ class OptimizedImageAnalyzer:
                         text = text[len(prefix):].strip()
                         break
                 
-                # Remove markdown and normalize
+                # Remove all markdown, extra punctuation, and filler words
                 text = text.replace('**', '').replace('*', '').replace('##', '')
+                text = text.replace(' and ', ', ').replace(' with ', ', ')
+                text = text.replace(' that ', ' ').replace(' which ', ' ')
+                text = text.replace(' appears to be ', ' ').replace(' seems to be ', ' ')
+                text = text.replace(' can be seen ', ' ').replace(' is visible ', ' ')
+                text = text.replace(' there is ', ' ').replace(' there are ', ' ')
                 text = ' '.join(text.split())
                 
-                # Remove trailing period if present
+                # Remove trailing period
                 if text.endswith('.'):
                     text = text[:-1]
                 
-                # Smart truncation to stay under 700 characters while preserving meaning
-                if len(text) > 700:
+                # Strict truncation to stay well under 700 characters
+                if len(text) > 650:
                     # Try to cut at sentence boundary
                     sentences = text.split('. ')
                     if len(sentences) > 1:
                         truncated = sentences[0]
                         for sentence in sentences[1:]:
-                            if len(truncated + '. ' + sentence) <= 697:
+                            if len(truncated + '. ' + sentence) <= 645:
                                 truncated += '. ' + sentence
                             else:
                                 break
@@ -154,12 +164,15 @@ class OptimizedImageAnalyzer:
                         truncated = []
                         char_count = 0
                         for word in words:
-                            if char_count + len(word) + 1 <= 697:
+                            if char_count + len(word) + 1 <= 645:
                                 truncated.append(word)
                                 char_count += len(word) + 1
                             else:
                                 break
-                        text = ' '.join(truncated) + "..."
+                        text = ' '.join(truncated)
+                
+                # Final character count check
+                logger.info(f"Final prompt length: {len(text)} characters")
                 
                 logger.info(f"Generated optimized prompt: {text[:100]}...")
                 return text
