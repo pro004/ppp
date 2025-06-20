@@ -71,8 +71,8 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Balanced prompt for detailed accuracy within character limits
-            prompt = """Describe precisely: subjects (exact age, gender, hair color/style, facial expression, pose, clothing details, accessories), objects (precise position using left/right/center/foreground/background, exact colors, materials), environment (lighting direction, setting details), art style (realistic/anime/digital), specific color names, composition (camera angle, depth). Include spatial relationships and fine details. Be detailed but concise."""
+            # Streamlined prompt for focused descriptions
+            prompt = """Describe: subjects (age, gender, hair, expression, pose, clothing), objects (position left/right/center/foreground/background, colors, materials), environment (lighting, setting), colors, composition (angle, depth), then art style. Be precise and concise."""
             
             payload = {
                 "contents": [{
