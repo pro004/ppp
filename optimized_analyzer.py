@@ -71,20 +71,26 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Ultra-detailed anime/manga prompt with precise positioning
-            prompt = """Create an anime/manga image prompt with comma-separated tags. Be extremely detailed and precise:
-1. Subject count: 1girl, 1boy, etc.
-2. Character name if anime character (like kanroji_mitsuri, nezuko_kamado, etc.)
-3. Group status: solo, group
-4. Clothing: exact type (bikini, swimsuit, school_uniform, dress), colors (green_bikini, red_dress)
-5. Hair: color (pink_hair, black_hair), length (long_hair, short_hair), style (twin_braids, ponytail, twin_tails)
-6. Eyes: color (green_eyes, red_eyes, blue_eyes)
-7. Body features: mole_under_eye, navel, upper_body, full_body
-8. Expression: looking_at_viewer, closed_mouth, open_mouth, smile
-9. Pose: arms_behind_back, arms_up, hand_on_hip
-10. Setting: beach, outdoors, indoors, day, night
-11. Background: blue_sky, ocean, clouds, water, trees
-Be very specific about positioning and details like "mole under eye" not just "mole"."""
+            # Comprehensive anime/manga tag prompt
+            prompt = """Analyze this image and create a detailed anime/manga booru-style tag list. Include ALL visible elements in comma-separated format:
+
+MANDATORY TAGS (in order):
+- Character count (1girl, 2girls, 1boy, etc.)
+- Character name if recognizable from anime/manga
+- Group status (solo, duo, group)
+- Clothing items with colors (green_bikini, white_shirt, school_uniform, etc.)
+- Hair details (pink_hair, long_hair, twin_braids, gradient_hair, multicolored_hair)
+- Eye details (green_eyes, blue_eyes, red_eyes)
+- Facial features (mole_under_eye, smile, closed_mouth, open_mouth)
+- Body visibility (upper_body, full_body, navel)
+- Pose/action (looking_at_viewer, arms_behind_back, hand_on_hip, sitting, standing)
+- Camera angle (from_above, from_side, close-up)
+- Setting/location (beach, outdoors, indoors, classroom, bedroom)
+- Time/lighting (day, night, sunlight, sunset)
+- Background elements (blue_sky, ocean, clouds, trees, water)
+- Art style if applicable (anime_style, realistic, etc.)
+
+Generate at least 20-30 detailed tags covering everything visible. Be extremely specific."""
             
             payload = {
                 "contents": [{
@@ -99,10 +105,10 @@ Be very specific about positioning and details like "mole under eye" not just "m
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.01,
-                    "topK": 3,
-                    "topP": 0.3,
-                    "maxOutputTokens": 250
+                    "temperature": 0.1,
+                    "topK": 10,
+                    "topP": 0.5,
+                    "maxOutputTokens": 300
                 }
             }
             
@@ -115,43 +121,45 @@ Be very specific about positioning and details like "mole under eye" not just "m
             if 'candidates' in result and result['candidates']:
                 text = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
-                # Clean anime/manga prompt format - preserve underscores in tags
+                # Clean booru-style tag formatting
                 prefixes = [
-                    "Create an anime/manga image prompt with comma-separated tags.",
-                    "Here's an anime/manga image prompt:",
-                    "Here's an image prompt:",
-                    "Here's a description:",
-                    "Image prompt:",
-                    "Prompt:",
+                    "Analyze this image and create a detailed anime/manga booru-style tag list.",
+                    "Include ALL visible elements in comma-separated format:",
+                    "MANDATORY TAGS (in order):",
+                    "Generate at least 20-30 detailed tags covering everything visible.",
+                    "Here's an anime/manga booru-style tag list:",
+                    "Here's a detailed tag list:",
                     "Tags:",
                     "**",
                     "*",
-                    "Here is the prompt:",
-                    "The prompt is:",
-                    "Be extremely detailed and precise:",
+                    "Be extremely specific.",
                 ]
                 
+                # Remove prefixes and clean text
                 for prefix in prefixes:
                     if text.lower().startswith(prefix.lower()):
                         text = text[len(prefix):].strip()
                         break
                 
-                # Clean but preserve anime tag structure
+                # Clean markdown and format for proper tag structure
                 text = text.replace('**', '').replace('*', '').replace('##', '')
-                text = text.replace(' and ', ', ').replace('; ', ', ')
+                text = text.replace('- ', '').replace('\n', ', ')  # Convert bullet points to commas
+                text = text.replace('; ', ', ').replace(': ', ', ')
                 
-                # Fix common spacing issues in anime tags
-                text = text.replace(' _', '_').replace('_ ', '_')  # Fix underscores
+                # Ensure proper anime tag formatting
                 text = text.replace(' hair', '_hair').replace(' eyes', '_eyes')
                 text = text.replace(' body', '_body').replace(' mouth', '_mouth')
                 text = text.replace(' viewer', '_viewer').replace(' back', '_back')
                 text = text.replace(' sky', '_sky').replace(' under eye', '_under_eye')
+                text = text.replace(' behind back', '_behind_back')
+                text = text.replace(' at viewer', '_at_viewer')
                 
-                # Normalize spacing
+                # Clean extra spaces and normalize
                 text = ' '.join(text.split())
+                text = text.replace(' ,', ',').replace(',,', ',')
                 
                 # Remove trailing punctuation
-                text = text.rstrip('.,;:')
+                text = text.strip().rstrip('.,;:')
                 
                 # Strict truncation for anime tag format - cut at comma boundaries
                 if len(text) > 680:
