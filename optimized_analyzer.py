@@ -71,8 +71,8 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Anime/manga style prompt generation
-            prompt = """Generate an image prompt in this exact format: number+gender, character_name (if recognizable), solo/group, main_clothing, distinctive_features, hair_details, pose/action, setting, background_elements. Use comma-separated tags like: 1girl, character_name, solo, outfit_type, eye_color, hair_color, hair_style, pose, location, background. Be precise and detailed but concise."""
+            # Detailed anime/manga style prompt generation
+            prompt = """Generate a detailed anime/manga image prompt using comma-separated tags. Include: 1) number+gender (1girl/1boy), 2) character name if recognizable, 3) solo/group, 4) clothing details (swimsuit/uniform/dress type, colors), 5) physical features (eye color, hair color, hair length, hair style like braids/twin_tails), 6) facial features (mole, expression), 7) body parts visible (navel, upper_body, etc), 8) pose/action (looking_at_viewer, arms_behind_back), 9) setting (beach/outdoors/indoors), 10) background details (sky, ocean, clouds). Use specific anime terminology and be very detailed."""
             
             payload = {
                 "contents": [{
@@ -87,10 +87,10 @@ class OptimizedImageAnalyzer:
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.05,
-                    "topK": 8,
-                    "topP": 0.5,
-                    "maxOutputTokens": 150
+                    "temperature": 0.03,
+                    "topK": 5,
+                    "topP": 0.4,
+                    "maxOutputTokens": 200
                 }
             }
             
@@ -136,7 +136,7 @@ class OptimizedImageAnalyzer:
                 text = text.rstrip('.,;:')
                 
                 # Strict truncation for anime tag format - cut at comma boundaries
-                if len(text) > 650:
+                if len(text) > 680:
                     # Split by commas to preserve tag structure
                     tags = text.split(', ')
                     truncated_tags = []
@@ -147,7 +147,7 @@ class OptimizedImageAnalyzer:
                         # Calculate length including comma separator
                         tag_length = len(tag) + (2 if truncated_tags else 0)  # +2 for ", "
                         
-                        if char_count + tag_length <= 645:
+                        if char_count + tag_length <= 675:
                             truncated_tags.append(tag)
                             char_count += tag_length
                         else:
