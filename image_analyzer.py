@@ -16,7 +16,7 @@ class ImageAnalyzer:
     
     def __init__(self):
         """Initialize the ImageAnalyzer with Gemini API configuration."""
-        self.api_key = os.getenv("GEMINI_API_KEY", "AIzaSyCfdO3Mp0rwzgmtQFWMyxyCO6M6wFQMGIY")
+        self.api_key = os.getenv("GEMINI_API_KEY") or os.environ.get("GEMINI_API_KEY")
         self.model = None
         self.last_request_time = None
         self.request_count = 0
@@ -196,28 +196,8 @@ class ImageAnalyzer:
             raise RuntimeError("Gemini API is not properly configured")
         
         try:
-            # Ultra-precise prompt for clean, detailed image description
-            system_prompt = """
-            Describe this image with maximum precision and detail. Provide ONLY the pure visual description without any introductory phrases, explanations, or commentary. Focus on exact visual elements:
-
-            Physical subjects: precise age, gender, build, posture, facial features, expressions, clothing details, accessories, hairstyles, actions, positions
-
-            Environment: exact location type, architectural elements, furniture, objects, props, spatial relationships, background details
-
-            Visual style: specific art style, medium, technique, rendering quality, artistic influences
-
-            Lighting: light source locations, shadow patterns, highlight placement, contrast levels, atmospheric effects
-
-            Colors: specific color names, saturation levels, temperature, gradients, color relationships
-
-            Composition: framing, perspective, depth, focal points, visual balance, leading elements
-
-            Textures and materials: surface qualities, material types, transparency, reflectivity, wear patterns
-
-            Fine details: text, symbols, patterns, decorative elements, small objects, quality indicators
-
-            Respond with ONLY the detailed visual description. No prefixes like "This image shows" or "The image depicts" - start directly with the description.
-            """
+            # Optimized prompt for detailed, accurate descriptions under 800 chars
+            system_prompt = """Describe this image in precise detail. Include: subjects (age, gender, pose, expression, clothing, hair), objects (position, size, color, material), environment (location, lighting, atmosphere), art style (realistic/anime/cartoon/digital), colors (specific names, saturation), composition (angle, depth, framing), textures, and fine details. Be exact with positions (left/right, foreground/background, above/below). Start directly with the visual description, no prefixes."""
             
             # Apply rate limiting to prevent quota issues
             self._rate_limit()

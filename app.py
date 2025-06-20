@@ -3,7 +3,7 @@ import logging
 from flask import Flask, request, jsonify, render_template, flash, redirect, url_for
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
-from image_analyzer import ImageAnalyzer
+from optimized_analyzer import OptimizedImageAnalyzer
 import tempfile
 import uuid
 
@@ -21,8 +21,8 @@ app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024  # 32MB max file size for be
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'tiff', 'tif', 'svg', 'ico', 'heic', 'heif', 'avif'}
 UPLOAD_FOLDER = tempfile.gettempdir()
 
-# Initialize the image analyzer
-analyzer = ImageAnalyzer()
+# Initialize the optimized image analyzer
+analyzer = OptimizedImageAnalyzer()
 
 def allowed_file(filename):
     """Check if the uploaded file has an allowed extension."""
