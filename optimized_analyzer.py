@@ -71,8 +71,8 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Ultra-compact prompt for detailed descriptions under 700 characters
-            prompt = """Describe in 1-2 sentences max: subjects (age, gender, pose, expression, clothing), objects (position, color), environment, art style, key colors, composition. Use precise spatial terms. Be extremely concise yet detailed. No prefixes or introductions."""
+            # Balanced prompt for detailed accuracy within character limits
+            prompt = """Describe precisely: subjects (exact age, gender, hair color/style, facial expression, pose, clothing details, accessories), objects (precise position using left/right/center/foreground/background, exact colors, materials), environment (lighting direction, setting details), art style (realistic/anime/digital), specific color names, composition (camera angle, depth). Include spatial relationships and fine details. Be detailed but concise."""
             
             payload = {
                 "contents": [{
@@ -87,10 +87,10 @@ class OptimizedImageAnalyzer:
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.1,
-                    "topK": 5,
-                    "topP": 0.5,
-                    "maxOutputTokens": 120
+                    "temperature": 0.15,
+                    "topK": 15,
+                    "topP": 0.7,
+                    "maxOutputTokens": 180
                 }
             }
             
@@ -136,9 +136,30 @@ class OptimizedImageAnalyzer:
                 if text.endswith('.'):
                     text = text[:-1]
                 
-                # Enforce 700 character limit
+                # Smart truncation to stay under 700 characters while preserving meaning
                 if len(text) > 700:
-                    text = text[:697] + "..."
+                    # Try to cut at sentence boundary
+                    sentences = text.split('. ')
+                    if len(sentences) > 1:
+                        truncated = sentences[0]
+                        for sentence in sentences[1:]:
+                            if len(truncated + '. ' + sentence) <= 697:
+                                truncated += '. ' + sentence
+                            else:
+                                break
+                        text = truncated
+                    else:
+                        # Cut at word boundary if no sentences
+                        words = text.split()
+                        truncated = []
+                        char_count = 0
+                        for word in words:
+                            if char_count + len(word) + 1 <= 697:
+                                truncated.append(word)
+                                char_count += len(word) + 1
+                            else:
+                                break
+                        text = ' '.join(truncated) + "..."
                 
                 logger.info(f"Generated optimized prompt: {text[:100]}...")
                 return text
