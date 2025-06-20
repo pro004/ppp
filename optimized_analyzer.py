@@ -71,8 +71,8 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Compact prompt for detailed, accurate descriptions
-            prompt = """Describe precisely: subjects (age, gender, pose, expression, clothing, hair), objects (exact position, color, material), environment (lighting, setting), art style, colors, composition (angle, depth), textures. Use spatial terms: left/right, foreground/background, above/below. Be concise but highly detailed."""
+            # Ultra-compact prompt for detailed descriptions under 700 characters
+            prompt = """Describe in 1-2 sentences max: subjects (age, gender, pose, expression, clothing), objects (position, color), environment, art style, key colors, composition. Use precise spatial terms. Be extremely concise yet detailed. No prefixes or introductions."""
             
             payload = {
                 "contents": [{
@@ -88,9 +88,9 @@ class OptimizedImageAnalyzer:
                 }],
                 "generationConfig": {
                     "temperature": 0.1,
-                    "topK": 10,
-                    "topP": 0.6,
-                    "maxOutputTokens": 200
+                    "topK": 5,
+                    "topP": 0.5,
+                    "maxOutputTokens": 120
                 }
             }
             
@@ -103,10 +103,12 @@ class OptimizedImageAnalyzer:
             if 'candidates' in result and result['candidates']:
                 text = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
-                # Clean up response - remove AI prefixes
+                # Aggressive cleaning to ensure under 700 characters
                 prefixes = [
+                    "Here's a description of the image:",
                     "Here's a detailed description of the image:",
                     "Here's a detailed description:",
+                    "Here's a description:",
                     "This image shows:",
                     "This image depicts:",
                     "The image shows:",
@@ -118,6 +120,7 @@ class OptimizedImageAnalyzer:
                     "This shows:",
                     "**Description:**",
                     "Description:",
+                    "Subjects:",
                 ]
                 
                 for prefix in prefixes:
@@ -126,12 +129,16 @@ class OptimizedImageAnalyzer:
                         break
                 
                 # Remove markdown and normalize
-                text = text.replace('**', '').replace('*', '')
+                text = text.replace('**', '').replace('*', '').replace('##', '')
                 text = ' '.join(text.split())
                 
                 # Remove trailing period if present
                 if text.endswith('.'):
                     text = text[:-1]
+                
+                # Enforce 700 character limit
+                if len(text) > 700:
+                    text = text[:697] + "..."
                 
                 logger.info(f"Generated optimized prompt: {text[:100]}...")
                 return text
