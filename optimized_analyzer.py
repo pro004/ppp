@@ -71,29 +71,14 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Precise anime/manga tag analysis
-            prompt = """Carefully count and analyze this image to create accurate anime/manga booru tags:
+            # Direct anime tag generation
+            prompt = """Generate anime/manga booru tags for this image. Count characters carefully and list in exact comma-separated format:
 
-STEP 1: COUNT CHARACTERS PRECISELY
-- Count each distinct person/character visible
-- Use exact numbers: 1girl, 1boy, 2girls, etc.
-- If both male and female: list separately (1girl, 1boy)
+1girl, 1boy, duo, [character_name if recognizable], [clothing_details with colors], [hair_color], [hair_length], [hair_style], [eye_color], [facial_features], [body_parts_visible], [pose/expression], [setting], [background_elements]
 
-STEP 2: CREATE DETAILED TAG LIST
-Include in comma-separated format:
-- Exact character count (be very careful with counting)
-- Character names if recognizable from anime/manga
-- Group status (solo if 1 person, duo if 2, group if 3+)
-- Clothing with colors (green_bikini, white_shirt, school_uniform)
-- Hair details (pink_hair, long_hair, twin_braids, multicolored_hair)
-- Eye colors (green_eyes, blue_eyes, red_eyes)
-- Facial features (mole_under_eye, smile, closed_mouth)
-- Body visibility (upper_body, full_body, navel)
-- Poses/actions (looking_at_viewer, arms_behind_back, sitting)
-- Setting (beach, outdoors, indoors, bedroom)
-- Background (blue_sky, ocean, clouds, water)
+Examples: 1girl, kanroji_mitsuri, solo, green_bikini, pink_hair, long_hair, twin_braids, green_eyes, mole_under_eye, navel, looking_at_viewer, beach, blue_sky
 
-CRITICAL: Double-check character count before generating tags. Be accurate about how many people are in the image."""
+Be precise with character count (1girl+1boy=duo, not solo). Include specific details like mole_under_eye, arms_behind_back, looking_at_viewer. Use underscores in multi-word tags."""
             
             payload = {
                 "contents": [{
@@ -124,54 +109,61 @@ CRITICAL: Double-check character count before generating tags. Be accurate about
             if 'candidates' in result and result['candidates']:
                 text = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
-                # Clean step-by-step analysis format
+                # Extract only the tag content
+                import re
+                
+                # Remove instruction prefixes
                 prefixes = [
-                    "Carefully count and analyze this image to create accurate anime/manga booru tags:",
-                    "STEP 1: COUNT CHARACTERS PRECISELY",
-                    "STEP 2: CREATE DETAILED TAG LIST",
-                    "Include in comma-separated format:",
-                    "CRITICAL: Double-check character count before generating tags.",
-                    "Here's the accurate tag list:",
+                    "Generate anime/manga booru tags for this image.",
+                    "Count characters carefully and list in exact comma-separated format:",
+                    "Examples:",
+                    "Be precise with character count",
+                    "Include specific details",
+                    "Use underscores in multi-word tags.",
+                    "**Tags:**",
                     "Tags:",
-                    "**",
-                    "*",
-                    "Be accurate about how many people are in the image.",
                 ]
                 
-                # Remove prefixes and clean text
                 for prefix in prefixes:
                     if text.lower().startswith(prefix.lower()):
                         text = text[len(prefix):].strip()
                         break
                 
-                # Clean step-by-step format and extract tag portion
+                # Remove example lines and instructions
+                lines = text.split('\n')
+                clean_lines = []
+                
+                for line in lines:
+                    line = line.strip()
+                    # Skip examples and instruction lines
+                    if any(skip in line.lower() for skip in [
+                        'example', '[character_name', 'kanroji_mitsuri', 'green_bikini',
+                        'be precise', 'include specific', 'use underscores'
+                    ]):
+                        continue
+                    
+                    # Keep actual tag lines
+                    if line and (',' in line or any(tag in line for tag in ['1girl', '1boy', 'solo', 'duo'])):
+                        clean_lines.append(line)
+                
+                text = ' '.join(clean_lines) if clean_lines else text
+                
+                # Clean and format
                 text = text.replace('**', '').replace('*', '').replace('##', '')
-                text = text.replace('- ', '').replace('\n', ', ')
+                text = text.replace('- ', '').replace(': ', ', ')
+                text = text.replace('; ', ', ').replace(' and ', ', ')
                 
-                # Remove step indicators and explanatory text
-                text = text.replace('Step 1:', '').replace('Step 2:', '')
-                text = text.replace('Count:', '').replace('Analysis:', '')
-                text = text.replace('Character count:', '').replace('Characters:', '')
-                
-                # Clean separators
-                text = text.replace('; ', ', ').replace(': ', ', ')
-                text = text.replace(' and ', ', ')
-                
-                # Ensure proper anime tag formatting with underscores
+                # Fix anime tag formatting
                 text = text.replace(' hair', '_hair').replace(' eyes', '_eyes')
                 text = text.replace(' body', '_body').replace(' mouth', '_mouth')
                 text = text.replace(' viewer', '_viewer').replace(' back', '_back')
                 text = text.replace(' sky', '_sky').replace(' under eye', '_under_eye')
-                text = text.replace(' behind back', '_behind_back')
-                text = text.replace(' at viewer', '_at_viewer')
                 text = text.replace('looking at', 'looking_at')
                 text = text.replace('arms behind', 'arms_behind')
                 
-                # Clean multiple commas and spaces
+                # Clean spacing and punctuation
                 text = ' '.join(text.split())
-                text = text.replace(' ,', ',').replace(',,', ',').replace(', ,', ',')
-                
-                # Remove trailing punctuation
+                text = text.replace(' ,', ',').replace(',,', ',')
                 text = text.strip().rstrip('.,;:')
                 
                 # Strict truncation for anime tag format - cut at comma boundaries
