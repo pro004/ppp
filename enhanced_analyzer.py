@@ -114,7 +114,12 @@ class EnhancedImageAnalyzer:
 
 CRITICAL REQUIREMENTS:
 - Describe EXACT positioning of people/objects (left, right, center, behind, in front, seated, standing, etc.)
-- Include ALL visible details: clothing, hair, facial expressions, hand positions, body poses
+- Include DETAILED body positioning: posture, stance, orientation, lean, tilt, body angle
+- Describe body expressions and language: confident, relaxed, tense, open, closed, dominant, submissive
+- Detail facial expressions: eyes (open/closed/squinting), mouth (smiling/frowning/neutral), eyebrows, cheeks
+- Include hand and arm positions: crossed, open, gesturing, pointing, resting, holding
+- Describe leg positioning: crossed, straight, bent, wide stance, close together
+- Include ALL visible clothing details, hair style and color, accessories
 - Preserve ALL background elements, colors, lighting, and setting details
 - Keep ALL descriptive information - DO NOT remove or truncate important visual details
 - Use precise, factual descriptions of what is actually visible
@@ -275,9 +280,9 @@ CRITICAL REQUIREMENTS:
             parts = [part.strip() for part in text.split(',') if part.strip()]
             text = ', '.join(parts)
             
-            # Smart truncation to keep under 800-900 characters
+            # Smart truncation to keep under 800-900 characters while preserving body details
             if len(text) > 900:
-                text = self._smart_truncate_detailed(text, 850)
+                text = self._smart_truncate_detailed(text, 880)
             
             return text
             
@@ -298,7 +303,12 @@ CRITICAL REQUIREMENTS:
         high_priority = [
             'woman', 'man', 'person', 'girl', 'boy', 'character', 'figure',
             'left', 'right', 'center', 'behind', 'front', 'seated', 'standing', 'positioned',
-            'hair', 'eyes', 'face', 'expression', 'clothing', 'outfit', 'dress', 'shirt',
+            'posture', 'stance', 'lean', 'tilt', 'orientation', 'body', 'pose',
+            'confident', 'relaxed', 'tense', 'open', 'closed', 'dominant', 'submissive',
+            'eyes', 'mouth', 'smiling', 'frowning', 'expression', 'facial',
+            'arms', 'hands', 'crossed', 'gesturing', 'pointing', 'holding',
+            'legs', 'straight', 'bent', 'wide', 'close',
+            'hair', 'face', 'clothing', 'outfit', 'dress', 'shirt',
             'anime', 'digital', 'realistic', 'illustration', 'portrait'
         ]
         
