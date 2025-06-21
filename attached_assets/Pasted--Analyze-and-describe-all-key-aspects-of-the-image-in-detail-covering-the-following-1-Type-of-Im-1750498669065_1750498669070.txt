@@ -1,0 +1,107 @@
+"Analyze and describe all key aspects of the image in detail, covering the following:
+
+1. Type of Image:
+
+Is it a human, anime character, object, landscape, abstract art, architecture, animal, nature, or other?
+
+If human or anime, specify if it's realistic, stylized, or cartoonish.
+
+
+
+2. Subject/Entity Characteristics:
+
+If human: Age, gender, ethnicity, facial features (eye shape, nose, lips), hairstyle (color, texture, length), clothing (style, color, fabric), accessories (glasses, jewelry, etc.), expression, and pose.
+
+If anime character: Art style (chibi, modern, traditional), eyes (shape, size, color), hairstyle (color, length), outfit (color, design, accessories), emotion/expression, and background.
+
+If object: Type (furniture, technology, tool, vehicle), shape, size, material (wood, plastic, metal), color, texture, condition (new, old, worn), function/purpose.
+
+If landscape/nature: Setting (forest, beach, city, mountains), time of day, weather, elements (water, trees, animals), atmosphere (serene, chaotic), mood (peaceful, stormy).
+
+If animal: Species, breed, posture, expression, setting (indoor, outdoor), and any special traits (color, fur, tail, etc.).
+
+If abstract art: Colors, shapes, patterns, mood/emotion, technique (brushstroke, digital, pixel art), symbolism or deeper meaning.
+
+
+
+3. Composition:
+
+Framing: Close-up, mid-shot, wide-angle, aerial view, etc.
+
+Focus: Sharp focus, blurred background (bokeh), depth of field, etc.
+
+Perspective: Eye-level, high angle, low angle, tilted, bird’s eye, etc.
+
+Lighting: Natural or artificial, harsh or soft lighting, shadows, highlights, and any special light effects (backlighting, rim lighting, etc.).
+
+
+
+4. Color and Texture:
+
+Color Palette: Dominant colors (warm, cool, neutral), contrast, saturation.
+
+Textures: Smooth, rough, glossy, matte, fabric textures, surface details.
+
+Tone: Light, dark, monochromatic, vibrant, pastel.
+
+
+
+5. Background and Environment:
+
+Setting: Urban, rural, indoor, outdoor, abstract, fantasy, futuristic, etc.
+
+Elements in Background: Objects, scenery, animals, people, architecture, and other features.
+
+Depth: Is the background blurred, detailed, or minimalistic?
+
+
+
+6. Artistic Style and Technique:
+
+Medium: Digital, painting, photography, sculpture, collage, mixed media.
+
+Art Movement/Style: Realism, impressionism, surrealism, minimalism, expressionism, digital art, photography, cartoon, etc.
+
+Effects: Filters, gradients, glows, blending, texture overlays, digital manipulation, etc.
+
+
+
+7. Emotional and Symbolic Impact:
+
+Emotion: What feeling or mood does the image evoke? (Joy, sadness, excitement, calmness, fear, etc.)
+
+Message or Theme: Does the image have any message or symbolism? (e.g., peace, chaos, hope, love, conflict)
+
+Cultural Significance: Any references to culture, history, social commentary, or identity.
+
+
+
+8. Movement and Action:
+
+Static or Dynamic: Is the image still or does it suggest movement?
+
+Motion Elements: Does the image convey action, speed, or energy? (e.g., flowing hair, running animal, a car in motion)
+
+Gesture: How do the body language or poses of subjects contribute to the image's dynamic?
+
+
+
+9. Composition and Framing Techniques:
+
+Rule of Thirds: Is the subject placed along any of the imaginary dividing lines?
+
+Symmetry/Asymmetry: Is the image balanced or deliberately unbalanced?
+
+Leading Lines: Does the image use lines to guide the viewer’s eye toward a focal point?
+
+
+
+10. Other Unique Features:
+
+
+
+Objects of Interest: Unique items or features that stand out (e.g., magical items, futuristic tech, rare plants).
+
+Interaction: How do elements within the image interact with each other (e.g., character and environment, character and object)?
+
+Framing/Bordering: Does the image have a frame, border, or specific edge detailing?
