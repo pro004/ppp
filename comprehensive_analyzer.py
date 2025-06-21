@@ -82,21 +82,25 @@ class ComprehensiveImageAnalyzer:
             # Enhanced detailed prompt with spatial positioning and background focus
             comprehensive_prompt = """Analyze this image and describe exactly what you see in precise detail. Focus on factual observations only:
 
-EXACT POSITIONING: Describe the precise position and pose of each person/object as actually seen in the image. Use specific directional terms (left, right, center, behind, in front) and exact body positioning.
+EXACT POSITIONING: Describe the precise position and pose of each person/object as actually seen in the image. Use specific directional terms (left, right, center, behind, in front) and exact body positioning with limb placement.
 
-VISUAL ELEMENTS: Only describe what is clearly visible - clothing, hair, expressions, poses, background elements, objects.
+DETAILED VISUAL ELEMENTS: Describe clothing details, hair color and style, facial expressions, eye state (open/closed), skin tone, body positioning, hand placement, leg positioning, any visible accessories or markings.
 
-ARTISTIC DETAILS: Art style, medium, lighting, colors, composition as directly observed.
+BACKGROUND & SETTING: Describe visible background elements, color tones, lighting quality, any text or symbols, furniture or objects if clearly visible.
+
+ARTISTIC DETAILS: Art style, medium, lighting direction, color palette, shading, line quality, composition framing.
+
+TECHNICAL ELEMENTS: Image quality, perspective angle, focus areas, any visible text or watermarks.
 
 Requirements:
 - Use only factual, observable details
 - Describe positions exactly as they appear in the image
-- Remove any assumptions or interpretations
-- Focus on spatial relationships and actual poses
+- Include specific details about clothing, hair, expressions, and poses
+- Note lighting, colors, and artistic style precisely
 - Include background elements only if clearly visible
-- Prioritize accuracy over completeness
+- Prioritize accuracy and detail over assumptions
 
-Format: Comma-separated phrases only, 600-800 characters, describing exactly what is visible in the image without artistic interpretation or assumed elements."""
+Format: Comma-separated phrases only, 600-800 characters, describing exactly what is visible in the image with detailed accuracy."""
             
             payload = {
                 "contents": [{
@@ -172,10 +176,11 @@ Format: Comma-separated phrases only, 600-800 characters, describing exactly wha
                     essential_parts = []
                     char_count = 0
                     
-                    # Prioritize factual positioning and visible elements only
+                    # Prioritize factual positioning and detailed visual elements
                     priority_keywords = [
-                        'seated', 'positioned', 'visible', 'center', 'left', 'right', 'behind', 'front',
-                        'woman', 'man', 'anime', 'style', 'hair', 'clothing', 'background', 'lighting'
+                        'seated', 'positioned', 'center', 'left', 'right', 'behind', 'front', 'woman', 'man',
+                        'anime', 'style', 'hair', 'clothing', 'background', 'lighting', 'eyes', 'expression',
+                        'hands', 'arms', 'legs', 'color', 'digital', 'illustration', 'soft', 'warm'
                     ]
                     
                     # Add high priority parts first
