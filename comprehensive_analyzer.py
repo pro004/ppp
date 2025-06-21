@@ -79,23 +79,18 @@ class ComprehensiveImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Detailed structured analysis prompt
-            comprehensive_prompt = """Analyze and describe the key features of the image provided. Include the following details:
+            # Clean comma-separated prompt generation
+            comprehensive_prompt = """Describe this image as comma-separated descriptive phrases. Include:
+- Image type and art style
+- Subject details (appearance, age, gender, clothing, pose, expression)
+- Background and setting
+- Colors and lighting
+- Mood and atmosphere
+- Any notable features
 
-1. Type of Image: (Is it a human, anime character, object, landscape, artwork, etc.?)
+Format as natural descriptive phrases separated by commas, like: "anime artwork, young woman, long brown hair, blue dress, smiling expression, outdoor garden setting, bright sunlight, cheerful mood"
 
-2. Subject Characteristics:
-- If it's a human: Describe their age, gender, ethnicity, facial expression, clothing, and hairstyle.
-- If it's an anime character: Describe their hairstyle, eye color, clothing, expression, and the artistic style (e.g., classic anime, modern, etc.).
-- If it's an object: Identify the object, its shape, color, material, and possible usage.
-- If it's a landscape: Mention the setting (e.g., city, beach, mountains), weather, time of day, and any prominent features (like trees, water, etc.).
-- If it's abstract art: Describe the colors, patterns, shapes, and any noticeable emotions or themes it conveys.
-
-3. Style and Artistry: Mention the art style or medium used (e.g., realism, digital art, sketch, painting, photography).
-
-4. Additional Details: Any unique or noteworthy features, such as symbolism, themes, or cultural references.
-
-Provide a detailed yet concise description based on the visual elements of the image."""
+Do not use numbered lists or headers. Only provide the comma-separated description."""
             
             payload = {
                 "contents": [{
@@ -110,10 +105,10 @@ Provide a detailed yet concise description based on the visual elements of the i
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.2,
-                    "topK": 20,
-                    "topP": 0.8,
-                    "maxOutputTokens": 1024
+                    "temperature": 0.1,
+                    "topK": 10,
+                    "topP": 0.5,
+                    "maxOutputTokens": 400
                 }
             }
             
@@ -126,16 +121,16 @@ Provide a detailed yet concise description based on the visual elements of the i
             if 'candidates' in result and result['candidates']:
                 text = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
-                # Clean up the detailed analysis response
-                logger.debug(f"Raw analysis response: {text[:200]}...")
+                # Clean up the comma-separated prompt response
+                logger.debug(f"Raw prompt response: {text[:200]}...")
                 
-                # Remove common prefixes that don't add value
+                # Remove common prefixes
                 prefixes_to_remove = [
-                    "Here's a detailed analysis of the image:",
-                    "Here's the analysis:",
-                    "Analysis of the image:",
-                    "Based on the image provided:",
-                    "Looking at this image:",
+                    "Here's the comma-separated description:",
+                    "The comma-separated description is:",
+                    "Description:",
+                    "Here's the description:",
+                    "The image shows:",
                 ]
                 
                 for prefix in prefixes_to_remove:
@@ -143,22 +138,28 @@ Provide a detailed yet concise description based on the visual elements of the i
                         text = text[len(prefix):].strip()
                         break
                 
-                # Clean up markdown formatting while preserving structure
-                text = text.replace('**', '').replace('*', '')
+                # Clean up formatting
+                text = text.replace('**', '').replace('*', '').replace('\n', ' ')
+                text = text.replace('- ', '').replace('• ', '')
                 
-                # Remove any redundant phrases
-                unwanted_phrases = [
-                    'as requested', 'as you can see', 'clearly visible',
-                    'based on the visual elements', 'in this image'
-                ]
+                # Remove numbered list formatting
+                import re
+                text = re.sub(r'^\d+\.\s*', '', text)
+                text = re.sub(r'\n\d+\.\s*', ', ', text)
                 
-                for phrase in unwanted_phrases:
+                # Ensure proper comma separation
+                text = ', '.join([phrase.strip() for phrase in text.split(',') if phrase.strip()])
+                
+                # Remove any unwanted phrases
+                unwanted = ['as you can see', 'in this image', 'the image shows', 'we can see']
+                for phrase in unwanted:
                     text = text.replace(phrase, '')
                 
-                # Clean up extra spaces
-                text = ' '.join(text.split())
+                # Clean up spacing and punctuation
+                text = text.replace(' ,', ',').replace(',,', ',')
+                text = text.strip().rstrip('.,;:')
                 
-                logger.info(f"Generated detailed analysis: {len(text)} characters")
+                logger.info(f"Generated comma-separated prompt: {len(text)} characters")
                 return {"success": True, "prompt": text, "analysis_type": "comprehensive"}
                 
             else:
