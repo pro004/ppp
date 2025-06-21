@@ -77,51 +77,48 @@ class EnhancedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Comprehensive analysis prompt based on the 16 detailed criteria
-            enhanced_prompt = """Analyze this image using comprehensive visual criteria and provide a clean, accurate description. Focus only on what is directly observable:
+            # Enhanced comprehensive prompt preserving real positioning and details
+            enhanced_prompt = """Analyze this image using the following detailed criteria and provide EXACTLY what you see:
 
-COLOR ANALYSIS: Identify dominant colors, color harmonies, contrasts, and their emotional impact on the composition.
+1. Color Schemes: What are the dominant colors? Are there contrasts, harmonies, or complementary colors? How do the colors influence the mood, focus, or emotion?
 
-OBJECT IDENTIFICATION: List primary subjects, secondary elements, their defining features, positioning, and contextual relationships.
+2. Objects: What are the primary subjects or objects? What are their defining features or roles? Are there background or secondary elements that add context, symbolism, or depth?
 
-TEXTURE & MATERIALS: Describe visible textures, surface qualities, patterns, and material properties that enhance visual experience.
+3. Textures: What textures or surface qualities can you observe? Are there patterns, materials, or visual effects that enhance the tactile or visual experience?
 
-EMOTIONAL TONE: Analyze the atmosphere, mood, expressions, gestures, and emotional content conveyed through composition.
+4. Emotions: What is the emotional tone or atmosphere? Are there human or animal expressions, postures, or gestures that convey emotion? How does the emotional content align with the composition or lighting?
 
-COMPOSITION STRUCTURE: Examine balance, symmetry, rule of thirds application, perspective angle, and viewer perception influence.
+5. Composition: Is the image balanced, asymmetrical, or centered? Does it follow the rule of thirds, symmetry, or other compositional principles? What perspective or angle is used and how does it influence viewer perception?
 
-LIGHTING QUALITY: Assess light sources, intensity, warmth/coolness, shadow interaction, and overall lighting effects.
+6. Lighting: What is the light source? Is the lighting soft or harsh, warm or cool? How does it interact with the subjects and shadows?
 
-CONTEXTUAL SETTING: Determine indoor/outdoor environment, time indicators, weather conditions, cultural or geographical elements.
+7. Context: What is the setting? What time of day, season, or weather conditions are shown? Are there cultural, historical, or geographical clues?
 
-ACTION & MOVEMENT: Identify any motion, interactions, activities, and how they contribute to the narrative.
+8. Action: Is there any movement or implied motion? What are the subjects doing or interacting with? How do actions contribute to the story or message?
 
-ARTISTIC STYLE: Classify the style (realism, digital art, illustration), techniques used, and their interpretative impact.
+9. Style: What artistic style is used? Are there notable techniques? How does the style affect interpretation?
 
-NARRATIVE ELEMENTS: Describe the story being told, themes, metaphors, and potential viewer interpretations.
+10. Narrative: What story or scenario is being told or implied? What themes, metaphors, or symbols are present?
 
-SYMBOLIC CONTENT: Note symbolic objects, gestures, arrangements, and their cultural or abstract meanings.
+11. Symbolism: Are there symbolic objects, gestures, or arrangements? What abstract ideas or cultural meanings might they represent?
 
-SPATIAL DEPTH: Analyze depth creation through overlapping, scaling, perspective, and dimensional qualities.
+12. Spatial Depth: How is a sense of space or distance created? Does the image feel flat or deep?
 
-FOCAL POINTS: Identify where attention is drawn, how focus is achieved, and clarity of visual hierarchy.
+13. Focal Point: Where does the viewer's eye go first? How is attention drawn? Is the focal point clearly defined?
 
-LINE & SHAPE: Describe line types, shapes used, and their role in guiding movement and structure.
+14. Line and Shape: What types of lines and shapes are used? How do they guide movement, emotion, or structure?
 
-TYPOGRAPHY: If text exists, analyze font styles, relationship to visual content, and functional role.
+15. Typography: If text is present, what fonts or lettering styles are used? How does the typography relate to the visual tone?
 
-SENSORY ELEMENTS: Note any implied sounds, textures, or sensory cues that enhance immersion.
+16. Sound and Sensory Cues: Are there any sounds or sensory cues? How do they support the visual elements?
 
-REQUIREMENTS:
-- Generate comma-separated descriptive phrases
-- Use only factual, observable details
-- Maintain accuracy over assumptions
-- Keep descriptions clean and precise
-- Focus on visual elements that enhance understanding
-- Target 600-800 characters for optimal detail
-- Exclude filler words and redundant phrases
-
-Format: Clean comma-separated phrases describing the comprehensive visual analysis."""
+CRITICAL REQUIREMENTS:
+- Describe EXACT positioning of people/objects (left, right, center, behind, in front, seated, standing, etc.)
+- Include ALL visible details: clothing, hair, facial expressions, hand positions, body poses
+- Preserve ALL background elements, colors, lighting, and setting details
+- Keep ALL descriptive information - DO NOT remove or truncate important visual details
+- Use precise, factual descriptions of what is actually visible
+- Format as detailed comma-separated phrases capturing the complete visual analysis"""
             
             payload = {
                 "contents": [{
@@ -136,10 +133,10 @@ Format: Clean comma-separated phrases describing the comprehensive visual analys
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.1,
-                    "topK": 8,
-                    "topP": 0.4,
-                    "maxOutputTokens": 700
+                    "temperature": 0.05,
+                    "topK": 5,
+                    "topP": 0.2,
+                    "maxOutputTokens": 1200
                 }
             }
             
@@ -155,7 +152,7 @@ Format: Clean comma-separated phrases describing the comprehensive visual analys
                 # Clean and optimize the response
                 cleaned_text = self._clean_analysis_response(raw_text)
                 
-                if cleaned_text and len(cleaned_text) >= 50:
+                if cleaned_text and len(cleaned_text) >= 100:
                     logger.info(f"Generated enhanced analysis: {len(cleaned_text)} characters")
                     return {"success": True, "prompt": cleaned_text, "analysis_type": "enhanced_comprehensive"}
                 else:
@@ -171,89 +168,86 @@ Format: Clean comma-separated phrases describing the comprehensive visual analys
             return {"success": False, "error": f"Analysis failed: {str(e)}"}
     
     def _clean_analysis_response(self, raw_text):
-        """Clean and optimize the analysis response for maximum clarity and accuracy."""
+        """Preserve detailed analysis while cleaning only unnecessary formatting."""
         try:
             text = raw_text.strip()
             
-            # Remove common AI response prefixes
-            prefixes_to_remove = [
+            # Only remove clear AI response prefixes, keep all content
+            minimal_prefixes = [
                 "Here's a comprehensive analysis of the image:",
                 "Here's the comma-separated description:",
-                "The comma-separated description is:",
-                "Based on the comprehensive visual criteria:",
-                "Analysis of the image:",
-                "Description:",
-                "Here's the analysis:",
-                "The image shows:",
-                "Looking at this image:",
+                "Based on the detailed criteria:",
+                "Analysis:",
             ]
             
-            for prefix in prefixes_to_remove:
+            for prefix in minimal_prefixes:
                 if text.lower().startswith(prefix.lower()):
                     text = text[len(prefix):].strip()
                     break
             
-            # Remove markdown formatting and bullet points
+            # Remove markdown formatting but preserve content
             text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)  # Bold
             text = re.sub(r'\*([^*]+)\*', r'\1', text)      # Italic
-            text = re.sub(r'^[-•]\s*', '', text, flags=re.MULTILINE)  # Bullet points
-            text = re.sub(r'^\d+\.\s*', '', text, flags=re.MULTILINE)  # Numbered lists
             
-            # Remove section headers if they exist
+            # Handle numbered sections - convert to comma-separated format while preserving all details
+            # Replace numbered sections with their content
             section_patterns = [
-                r'COLOR ANALYSIS:?[^\n]*\n?',
-                r'OBJECT IDENTIFICATION:?[^\n]*\n?',
-                r'TEXTURE & MATERIALS:?[^\n]*\n?',
-                r'EMOTIONAL TONE:?[^\n]*\n?',
-                r'COMPOSITION:?[^\n]*\n?',
-                r'LIGHTING:?[^\n]*\n?',
-                r'CONTEXT:?[^\n]*\n?',
-                r'ACTION:?[^\n]*\n?',
-                r'STYLE:?[^\n]*\n?',
-                r'NARRATIVE:?[^\n]*\n?',
-                r'SYMBOLIC:?[^\n]*\n?',
-                r'SPATIAL:?[^\n]*\n?',
-                r'FOCAL:?[^\n]*\n?',
-                r'LINE:?[^\n]*\n?',
-                r'TYPOGRAPHY:?[^\n]*\n?',
-                r'SENSORY:?[^\n]*\n?'
+                (r'1\.\s*Color Schemes?:?\s*([^2]+)', r'\1'),
+                (r'2\.\s*Objects?:?\s*([^3]+)', r'\1'),
+                (r'3\.\s*Textures?:?\s*([^4]+)', r'\1'),
+                (r'4\.\s*Emotions?:?\s*([^5]+)', r'\1'),
+                (r'5\.\s*Composition:?\s*([^6]+)', r'\1'),
+                (r'6\.\s*Lighting:?\s*([^7]+)', r'\1'),
+                (r'7\.\s*Context:?\s*([^8]+)', r'\1'),
+                (r'8\.\s*Action:?\s*([^9]+)', r'\1'),
+                (r'9\.\s*Style:?\s*([^1][^0]?[^.]*)', r'\1'),
+                (r'10\.\s*Narrative:?\s*([^1][^1]?[^.]*)', r'\1'),
+                (r'11\.\s*Symbolism:?\s*([^1][^2]?[^.]*)', r'\1'),
+                (r'12\.\s*Spatial Depth:?\s*([^1][^3]?[^.]*)', r'\1'),
+                (r'13\.\s*Focal Point:?\s*([^1][^4]?[^.]*)', r'\1'),
+                (r'14\.\s*Line and Shape:?\s*([^1][^5]?[^.]*)', r'\1'),
+                (r'15\.\s*Typography:?\s*([^1][^6]?[^.]*)', r'\1'),
+                (r'16\.\s*Sound and Sensory:?\s*(.*)', r'\1'),
             ]
             
-            for pattern in section_patterns:
-                text = re.sub(pattern, '', text, flags=re.IGNORECASE)
+            extracted_content = []
+            for pattern, replacement in section_patterns:
+                match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
+                if match:
+                    content = match.group(1).strip()
+                    if content:
+                        extracted_content.append(content)
             
-            # Convert newlines to commas and clean spacing
-            text = re.sub(r'\n+', ', ', text)
+            # If we found structured content, use it; otherwise use original
+            if extracted_content:
+                text = ' '.join(extracted_content)
+            
+            # Convert newlines and multiple spaces to single spaces
+            text = re.sub(r'\n+', ' ', text)
             text = re.sub(r'\s+', ' ', text)
             
-            # Remove filler phrases that add no descriptive value
-            filler_phrases = [
-                'can be seen', 'appears to be', 'seems to be', 'looks like',
-                'it appears', 'we can see', 'visible in the image', 'in this image',
-                'the image shows', 'what we see', 'as observed', 'clearly visible',
-                'that can be observed', 'which is visible', 'that appears',
-                'which seems', 'as seen in', 'evident in'
-            ]
+            # Convert sentences to comma-separated format while preserving all details
+            # Split by periods and join with commas
+            sentences = [s.strip() for s in text.split('.') if s.strip()]
+            text = ', '.join(sentences)
             
-            for phrase in filler_phrases:
-                text = re.sub(f'\\b{re.escape(phrase)}\\b', '', text, flags=re.IGNORECASE)
-            
-            # Clean punctuation and formatting
+            # Clean up punctuation but preserve important details
             text = re.sub(r'[;:]+', ',', text)  # Convert semicolons and colons to commas
             text = re.sub(r',\s*,+', ',', text)  # Remove multiple consecutive commas
             text = re.sub(r'\s*,\s*', ', ', text)  # Standardize comma spacing
-            text = re.sub(r'\s+', ' ', text)  # Remove extra spaces
+            
+            # Only remove minimal filler words that add no value
+            minimal_fillers = ['clearly', 'obviously', 'evidently']
+            for filler in minimal_fillers:
+                text = re.sub(f'\\b{filler}\\b', '', text, flags=re.IGNORECASE)
+            
+            # Clean spacing
+            text = re.sub(r'\s+', ' ', text)
+            text = text.strip().rstrip('.,;:')
             
             # Ensure proper comma separation
             parts = [part.strip() for part in text.split(',') if part.strip()]
             text = ', '.join(parts)
-            
-            # Optimize length while preserving essential details
-            if len(text) > 800:
-                text = self._smart_truncate(text, 800)
-            
-            # Final cleanup
-            text = text.strip().rstrip('.,;:')
             
             return text
             
