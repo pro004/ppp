@@ -77,49 +77,42 @@ class EnhancedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Enhanced prompt focusing on accurate body positioning and language
-            enhanced_prompt = """Create a detailed comma-separated description of this image. Be extremely precise about body positioning and body language.
+            # Streamlined prompt with 16-criteria conditional matching
+            enhanced_prompt = """Analyze this image and describe exactly what you see. Use comma-separated format.
 
-CRITICAL RULE: DESCRIBE THE IMAGE AS IT IS - DO NOT CHANGE OR MODIFY ANYTHING
+IMAGE QUALITY: Describe resolution, clarity, lighting quality, focus, grain/noise level
 
-BODY ANALYSIS (Critical - describe every visible body part precisely):
-- Primary posture: sitting, standing, lying, leaning, crouching, kneeling with exact surface/support
-- Torso orientation: facing forward, turned left/right, angled, twisted
-- Spine posture: straight, curved forward, arched back, slouched, tilted direction
-- Shoulder details: level/uneven, raised/lowered, rolled forward/back, one higher than other
-- Head positioning: facing direction, tilt angle, chin up/down, turned degree
-- Neck position: straight, tilted, craned forward/back
-- Arm configuration: both arms position, left arm specifically, right arm specifically, bent/straight angles
-- Hand positions: each hand separately - open/closed, pointing, touching what, finger positions, gestures, grip on objects
-- Torso lean: forward/backward/sideways, upright, twisted
-- Hip position: level, tilted, weight shifted to which side
-- Leg stance: both legs, left leg position, right leg position, together/apart distance, crossed/uncrossed
-- Knee positions: bent/straight angles, one forward/back, kneeling position
-- Foot placement: both feet, left foot, right foot, flat/angled, direction pointing, on ground/elevated
-- Weight distribution: which leg/side carries weight, balanced/unbalanced stance
+BODY POSITIONING (only visible parts):
+- Posture, torso orientation, spine alignment
+- Head direction, arm positions, hand placement
+- Leg stance, foot positioning, weight distribution
 
-BODY LANGUAGE & STYLE:
-- Overall energy: relaxed, tense, confident, nervous, alert, tired, energetic
-- Posture confidence: confident stance, uncertain posture, defensive, open, closed
-- Emotional indicators: happy posture, sad slouch, angry tension, surprise, neutral
-- Body openness: arms open/closed, torso facing toward/away, welcoming/guarded stance
-- Movement quality: static, dynamic, fluid, rigid, graceful, awkward
-- Style expression: formal posture, casual stance, athletic position, artistic pose
+APPEARANCE:
+- Hair, eyes, skin tone, facial expression
+- Clothing details, accessories, held objects
 
-PHYSICAL DETAILS:
-- Hair color and style exactly as visible
-- Eye state: open, closed, looking direction, expression
-- Clothing: garment types, colors, patterns, textures, fit, brand logos, condition
-- Skin tone as actually appears
-- Anatomical details: precise positioning of each visible body segment and joint angles
-- Accessories and objects: jewelry, glasses, bags, shoes, held items
+BACKGROUND:
+- Objects, colors, lighting, spatial layout
 
-BACKGROUND & STYLE:
-- Background objects, colors, textures, lighting
-- Architectural elements, room type, spatial relationships
-- Artistic style, composition, any additional notable elements
+16-POINT CRITERIA (include only if clearly present):
+1. Color Schemes - dominant colors, contrasts
+2. Objects - main subjects, features  
+3. Textures - surface qualities, materials
+4. Emotions - expressions, mood
+5. Composition - balance, framing
+6. Lighting - sources, shadows, quality
+7. Context - setting, environment
+8. Action - movement, activities
+9. Style - artistic approach, medium
+10. Narrative - story elements, themes
+11. Symbolism - symbolic elements
+12. Spatial Depth - layering, distance
+13. Focal Points - attention direction
+14. Line & Shape - structural elements
+15. Typography - visible text, fonts
+16. Sensory Cues - atmosphere, implied sounds
 
-Format as comma-separated phrases. Describe only what is clearly visible."""
+IMPORTANT: Skip criteria not present. Describe visible objects even if they don't match criteria."""
             
             payload = {
                 "contents": [{

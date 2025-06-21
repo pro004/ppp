@@ -72,18 +72,16 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Accurate visual analysis prompt
-            prompt = """Look carefully at this image and describe EXACTLY what you see. Generate comma-separated tags for:
+            # Streamlined prompt matching enhanced analyzer
+            prompt = """Analyze this image and describe exactly what you see. Use comma-separated format.
 
-What type of image: photo, anime, drawing, etc.
-Who/what is in the image: count people accurately, describe their actual appearance
-What they're wearing: detailed clothing description (garment types, colors, patterns, textures, accessories, shoes)
-What they're doing: detailed body positions (posture, arm positions, hand placement, leg stance, head orientation), expressions, actions, body language indicators - describe exactly what you see
-Where they are: actual setting with position details (sitting/standing/lying on what), specific background objects (furniture, walls, windows, doors, decorative items), architectural elements (ceiling, floor, moldings), environmental details (indoor/outdoor, room type), exact background color names and intensity, textures and patterns
-Colors and lighting: what you actually see
-Style: realistic, anime, artistic style
+IMAGE QUALITY: resolution, clarity, lighting quality, focus
+BODY POSITIONING: posture, arm/hand positions, leg stance
+APPEARANCE: hair, eyes, clothing, accessories  
+BACKGROUND: objects, colors, lighting, setting
+CRITERIA: include only clearly present elements
 
-Only describe what is clearly visible. Be accurate about gender, clothing, poses, and setting. Don't assume or add details not clearly shown."""
+Describe visible objects even if they don't match standard criteria."""
             
             payload = {
                 "contents": [{
