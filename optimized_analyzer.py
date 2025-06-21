@@ -71,18 +71,8 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Universal image analysis prompt
-            prompt = """Analyze this image comprehensively and generate a detailed description covering:
-
-1. Image Type & Style: Specify if human/anime/object/landscape/abstract, art style (realistic/stylized/cartoonish)
-2. Subject Details: For humans/anime - age, gender, hair (color/length/style), clothing (type/colors), facial features, pose, expression, body position
-3. Spatial Positioning: Exact placement (left/right/center, foreground/background), relative positions between subjects/objects
-4. Composition: Camera angle, framing, lighting conditions, depth of field
-5. Environment: Setting, background elements, time of day, atmosphere
-6. Colors & Materials: Dominant colors, textures, materials visible
-7. Emotions & Interactions: Expressions, body language, subject interactions
-
-Generate as comma-separated tags with precise positional details. Be accurate about what's actually visible."""
+            # Direct comprehensive prompt
+            prompt = """Describe this image in detail using comma-separated tags. Include: image type (human/anime/object/landscape), subject details (age, gender, hair, clothing, pose, expression), spatial positioning (left/right/center, foreground/background), composition (camera angle, lighting), environment (setting, background), colors, materials, emotions, interactions. Be specific and accurate about what's visible."""
             
             payload = {
                 "contents": [{
@@ -97,10 +87,10 @@ Generate as comma-separated tags with precise positional details. Be accurate ab
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.1,
-                    "topK": 15,
-                    "topP": 0.6,
-                    "maxOutputTokens": 350
+                    "temperature": 0.3,
+                    "topK": 25,
+                    "topP": 0.8,
+                    "maxOutputTokens": 400
                 }
             }
             
@@ -113,52 +103,36 @@ Generate as comma-separated tags with precise positional details. Be accurate ab
             if 'candidates' in result and result['candidates']:
                 text = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
-                # Clean comprehensive analysis format
-                prefixes = [
-                    "Analyze this image comprehensively and generate a detailed description covering:",
-                    "1. Image Type & Style:",
-                    "2. Subject Details:",
-                    "3. Spatial Positioning:",
-                    "4. Composition:",
-                    "5. Environment:",
-                    "6. Colors & Materials:",
-                    "7. Emotions & Interactions:",
-                    "Generate as comma-separated tags with precise positional details.",
-                    "Be accurate about what's actually visible.",
+                # Clean analysis format while preserving content
+                # Remove common AI response prefixes
+                prefixes_to_remove = [
+                    "Here's a comprehensive analysis of the image, presented as comma-separated tags:",
+                    "Here's a comma-separated tag analysis of the image:",
                     "Here's the comprehensive analysis:",
+                    "Here's a detailed analysis:",
                     "Analysis:",
                     "Tags:",
+                    "**",
+                    "*"
                 ]
                 
-                for prefix in prefixes:
+                for prefix in prefixes_to_remove:
                     if text.lower().startswith(prefix.lower()):
                         text = text[len(prefix):].strip()
                         break
                 
-                # Remove numbered list format and extract actual content
-                lines = text.split('\n')
-                content_lines = []
+                # If the text is too short, return error
+                if len(text) < 20:
+                    logger.warning(f"Response too short: {text}")
+                    return None
                 
-                for line in lines:
-                    line = line.strip()
-                    # Skip numbered categories and instruction lines
-                    if any(skip in line.lower() for skip in [
-                        '1.', '2.', '3.', '4.', '5.', '6.', '7.',
-                        'image type', 'subject details', 'spatial positioning',
-                        'composition', 'environment', 'colors & materials', 'emotions'
-                    ]):
-                        continue
-                    
-                    # Keep actual descriptive content
-                    if line and (',' in line or len(line.split()) > 3):
-                        content_lines.append(line)
+                # Simple cleaning - remove basic formatting
+                text = text.replace('**', '').replace('*', '').replace('#', '')
+                text = text.replace(';', ',').replace(':', ',')
+                text = ' '.join(text.split())  # normalize whitespace
                 
-                if content_lines:
-                    text = ' '.join(content_lines)
-                
-                # Convert structured format to tags
-                text = text.replace(':', ',').replace(';', ',')
-                text = text.replace(' - ', ', ').replace(' / ', ', ')
+                # Remove trailing punctuation
+                text = text.strip().rstrip('.,;:')
                 
                 # Clean and format
                 text = text.replace('**', '').replace('*', '').replace('##', '')
