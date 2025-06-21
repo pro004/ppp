@@ -79,18 +79,26 @@ class ComprehensiveImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Clean comma-separated prompt generation
-            comprehensive_prompt = """Describe this image as comma-separated descriptive phrases. Include:
-- Image type and art style
-- Subject details (appearance, age, gender, clothing, pose, expression)
-- Background and setting
-- Colors and lighting
-- Mood and atmosphere
-- Any notable features
+            # Enhanced detailed prompt for comprehensive analysis
+            comprehensive_prompt = """Examine this image thoroughly and provide a comprehensive comma-separated description covering every visual detail. Include all of these aspects:
 
-Format as natural descriptive phrases separated by commas, like: "anime artwork, young woman, long brown hair, blue dress, smiling expression, outdoor garden setting, bright sunlight, cheerful mood"
+Image classification (human, animal, anime, object, landscape, architecture, abstract art), artistic style (realistic, stylized, cartoonish, digital art, photography, painting), medium and technique used.
 
-Do not use numbered lists or headers. Only provide the comma-separated description."""
+For people/characters: precise age estimation, gender, ethnicity if discernible, detailed facial features (eyes, nose, mouth, expression), complete hairstyle and color description, full clothing details including colors and materials, exact body pose and positioning, any accessories or distinguishing marks.
+
+Composition elements: framing type (close-up, medium, wide shot), camera angle and perspective, focal points, depth of field, symmetry or asymmetry, leading lines, rule of thirds application.
+
+Lighting analysis: light source direction and type (natural/artificial), lighting quality (soft, harsh, diffused, dramatic), shadow patterns, highlights, overall brightness, time of day indicators.
+
+Color and texture: dominant color palette, color temperature (warm/cool), saturation levels, contrast, specific material textures (smooth, rough, glossy, matte, fabric, metal, skin), surface qualities.
+
+Background and environment: detailed setting description, spatial relationships, foreground/middle ground/background elements, environmental context, location type.
+
+Emotional and thematic content: mood conveyed, atmosphere, symbolic elements, cultural references, narrative implications, emotional impact.
+
+Technical aspects: image quality, any visual effects or filters, processing style, artistic techniques, movement or action captured.
+
+Provide this as flowing descriptive phrases separated by commas, ensuring comprehensive coverage of all visible elements."""
             
             payload = {
                 "contents": [{
@@ -105,10 +113,10 @@ Do not use numbered lists or headers. Only provide the comma-separated descripti
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.1,
-                    "topK": 10,
-                    "topP": 0.5,
-                    "maxOutputTokens": 400
+                    "temperature": 0.15,
+                    "topK": 15,
+                    "topP": 0.7,
+                    "maxOutputTokens": 800
                 }
             }
             

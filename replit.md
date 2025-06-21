@@ -96,8 +96,9 @@ The Image Prompt Extractor is a web service that analyzes images and generates c
 - June 19, 2025: Fixed system dependency issues and created simplified image analyzer
 - June 19, 2025: Updated web interface layout for side-by-side image and prompt display
 - June 19, 2025: Enhanced with forensic precision - exact positioning, angles, spatial relationships with precise directional terms (3 sentences, observable facts only)
-- June 21, 2025: Finalized to generate clean comma-separated descriptive prompts without headers or structure formatting
+- June 21, 2025: Enhanced analyzer with comprehensive visual analysis covering composition, lighting, textures, emotional content, and technical aspects for highly detailed comma-separated prompts
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Preferred analysis style: Comprehensive, detailed comma-separated prompts covering all visual elements including composition, lighting, character details, emotional content, and technical aspects.
