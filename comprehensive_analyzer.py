@@ -80,25 +80,23 @@ class ComprehensiveImageAnalyzer:
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
             # Enhanced detailed prompt with spatial positioning and background focus
-            comprehensive_prompt = """Analyze this image in detail and provide a comprehensive comma-separated description. Focus particularly on:
+            comprehensive_prompt = """Analyze this image and describe exactly what you see in precise detail. Focus on factual observations only:
 
-Image type and artistic style, medium used.
+EXACT POSITIONING: Describe the precise position and pose of each person/object as actually seen in the image. Use specific directional terms (left, right, center, behind, in front) and exact body positioning.
 
-Characters/subjects: age, gender, facial features, hairstyle, clothing details, exact positioning (where each person/object is located - left/right/center, foreground/background, sitting/standing/lying, body orientation, complete limb positions - arms, legs, hands, feet placement), full body poses, torso positioning, head tilt, expressions, physical interactions between subjects, body contact points.
+VISUAL ELEMENTS: Only describe what is clearly visible - clothing, hair, expressions, poses, background elements, objects.
 
-Background environment: specific location type (indoor/outdoor, room type, furniture, objects), all visible background elements, spatial depth, everything visible behind and around subjects, environmental context, setting atmosphere, wall details, floor/surface details, any visible items or decorations.
+ARTISTIC DETAILS: Art style, medium, lighting, colors, composition as directly observed.
 
-Composition: framing, angle, perspective, focal points, positioning within frame (top/bottom/center/sides).
+Requirements:
+- Use only factual, observable details
+- Describe positions exactly as they appear in the image
+- Remove any assumptions or interpretations
+- Focus on spatial relationships and actual poses
+- Include background elements only if clearly visible
+- Prioritize accuracy over completeness
 
-Lighting: source direction, quality, shadows, highlights, color temperature.
-
-Colors and textures: palette, materials, surface qualities.
-
-Mood and atmosphere: emotional tone, thematic elements.
-
-Be extremely precise about body positioning using exact directional terms - specify complete poses like "woman seated center-frame, legs spread wide apart at 45-degree angle, torso leaning slightly forward, left arm resting on left thigh, right arm hanging beside body, head tilted 15 degrees downward, man kneeling behind woman positioned at her right shoulder, left arm wrapped around her waist from behind, right hand placed on her right breast, legs straddling her sides" etc. Use precise angles, directions (left/right/center/behind/front), and exact body part placement.
-
-Analyze everything visible in the image - all body parts, clothing details, background objects, lighting sources, textures, surfaces. Provide comprehensive description targeting 700-900 characters, comma-separated phrases only, capturing all visual elements."""
+Format: Comma-separated phrases only, 600-800 characters, describing exactly what is visible in the image without artistic interpretation or assumed elements."""
             
             payload = {
                 "contents": [{
@@ -113,10 +111,10 @@ Analyze everything visible in the image - all body parts, clothing details, back
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.05,
-                    "topK": 10,
-                    "topP": 0.5,
-                    "maxOutputTokens": 750
+                    "temperature": 0.02,
+                    "topK": 5,
+                    "topP": 0.3,
+                    "maxOutputTokens": 650
                 }
             }
             
@@ -167,30 +165,29 @@ Analyze everything visible in the image - all body parts, clothing details, back
                 text = text.replace(' ,', ',').replace(',,', ',')
                 text = text.strip().rstrip('.,;:')
                 
-                # Ensure length is around 700-900 characters
-                if len(text) > 920:
+                # Ensure optimal length focusing on accuracy
+                if len(text) > 800:
                     # Smart truncation while keeping essential elements
                     parts = text.split(', ')
                     essential_parts = []
                     char_count = 0
                     
-                    # Prioritize spatial positioning, body details, and background info
+                    # Prioritize factual positioning and visible elements only
                     priority_keywords = [
-                        'positioned', 'located', 'background', 'foreground', 'center', 'left', 'right',
-                        'behind', 'front', 'sitting', 'standing', 'lying', 'room', 'setting', 'legs',
-                        'arms', 'hands', 'feet', 'torso', 'head', 'body', 'spread', 'wrapped', 'placement'
+                        'seated', 'positioned', 'visible', 'center', 'left', 'right', 'behind', 'front',
+                        'woman', 'man', 'anime', 'style', 'hair', 'clothing', 'background', 'lighting'
                     ]
                     
                     # Add high priority parts first
                     for part in parts:
                         if any(keyword in part.lower() for keyword in priority_keywords):
-                            if char_count + len(part) + 2 <= 900:
+                            if char_count + len(part) + 2 <= 800:
                                 essential_parts.append(part)
                                 char_count += len(part) + 2
                     
                     # Add remaining parts if space allows
                     for part in parts:
-                        if part not in essential_parts and char_count + len(part) + 2 <= 900:
+                        if part not in essential_parts and char_count + len(part) + 2 <= 800:
                             essential_parts.append(part)
                             char_count += len(part) + 2
                     
