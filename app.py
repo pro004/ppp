@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify, render_template, flash, redirect, url
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
 from optimized_analyzer import OptimizedImageAnalyzer
+from comprehensive_analyzer import ComprehensiveImageAnalyzer
 import tempfile
 import uuid
 
@@ -21,8 +22,9 @@ app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024  # 32MB max file size for be
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'tiff', 'tif', 'svg', 'ico', 'heic', 'heif', 'avif'}
 UPLOAD_FOLDER = tempfile.gettempdir()
 
-# Initialize the optimized image analyzer
-analyzer = OptimizedImageAnalyzer()
+# Initialize both analyzers - use comprehensive for detailed analysis
+analyzer = OptimizedImageAnalyzer()  # Keep for backward compatibility
+comprehensive_analyzer = ComprehensiveImageAnalyzer()  # New detailed analyzer
 
 def allowed_file(filename):
     """Check if the uploaded file has an allowed extension."""
@@ -58,9 +60,13 @@ def analyze_image():
         
         prompt = None
         
+        # Check if comprehensive analyzer is available, otherwise fall back
+        active_analyzer = comprehensive_analyzer if comprehensive_analyzer.is_configured() else analyzer
+        result = None
+        
         if image_url:
             logger.info(f"Analyzing image from URL: {image_url}")
-            prompt = analyzer.analyze_from_url(image_url)
+            result = active_analyzer.analyze_from_url(image_url)
         
         elif uploaded_file and uploaded_file.filename:
             if not allowed_file(uploaded_file.filename):
@@ -74,15 +80,27 @@ def analyze_image():
             
             try:
                 logger.info(f"Analyzing uploaded image: {filename}")
-                prompt = analyzer.analyze_from_file(file_path)
+                result = active_analyzer.analyze_from_file(file_path)
             finally:
                 # Clean up temporary file
                 if os.path.exists(file_path):
                     os.remove(file_path)
         
-        if prompt:
-            flash(f'Analysis successful! Prompt: {prompt}', 'success')
-            return render_template('index.html', prompt=prompt)
+        # Handle response format differences between analyzers
+        if result:
+            if isinstance(result, dict) and result.get('success'):
+                prompt = result.get('prompt', '')
+                analysis_type = result.get('analysis_type', 'basic')
+                flash(f'Comprehensive analysis successful! ({analysis_type})', 'success')
+                return render_template('index.html', prompt=prompt, analysis_type=analysis_type)
+            elif isinstance(result, str):
+                # Legacy format from optimized analyzer
+                flash('Analysis successful!', 'success')
+                return render_template('index.html', prompt=result, analysis_type='basic')
+            else:
+                error_msg = result.get('error', 'Unknown error') if isinstance(result, dict) else 'Analysis failed'
+                flash(f'Failed to analyze the image: {error_msg}', 'error')
+                return redirect(url_for('index'))
         else:
             flash('Failed to analyze the image. Please try again.', 'error')
             return redirect(url_for('index'))
@@ -115,18 +133,25 @@ def api_analyze_image():
                 }), 400
             
             logger.info(f"API: Analyzing image from URL: {image_url}")
-            prompt = analyzer.analyze_from_url(image_url)
+            # Use comprehensive analyzer for API requests
+            active_analyzer = comprehensive_analyzer if comprehensive_analyzer.is_configured() else analyzer
+            result = active_analyzer.analyze_from_url(image_url)
             
-            if prompt:
-                return jsonify({
-                    'success': True,
-                    'prompt': prompt
-                })
-            else:
-                return jsonify({
-                    'success': False,
-                    'error': 'Failed to analyze the image'
-                }), 500
+            # Handle response format differences between analyzers
+            if result:
+                if isinstance(result, dict):
+                    return jsonify(result)
+                elif isinstance(result, str):
+                    return jsonify({
+                        'success': True,
+                        'prompt': result,
+                        'analysis_type': 'basic'
+                    })
+            
+            return jsonify({
+                'success': False,
+                'error': 'Failed to analyze the image'
+            }), 500
         
         # Handle file upload with memory protection
         elif request.files and 'image_file' in request.files:
@@ -158,18 +183,25 @@ def api_analyze_image():
             try:
                 uploaded_file.save(file_path)
                 logger.info(f"API: Analyzing uploaded image: {filename}")
-                prompt = analyzer.analyze_from_file(file_path)
+                # Use comprehensive analyzer for API requests
+                active_analyzer = comprehensive_analyzer if comprehensive_analyzer.is_configured() else analyzer
+                result = active_analyzer.analyze_from_file(file_path)
                 
-                if prompt:
-                    return jsonify({
-                        'success': True,
-                        'prompt': prompt
-                    })
-                else:
-                    return jsonify({
-                        'success': False,
-                        'error': 'Failed to analyze the image'
-                    }), 500
+                # Handle response format differences between analyzers
+                if result:
+                    if isinstance(result, dict):
+                        return jsonify(result)
+                    elif isinstance(result, str):
+                        return jsonify({
+                            'success': True,
+                            'prompt': result,
+                            'analysis_type': 'basic'
+                        })
+                
+                return jsonify({
+                    'success': False,
+                    'error': 'Failed to analyze the image'
+                }), 500
             except Exception as e:
                 logger.error(f"Error processing uploaded file: {str(e)}")
                 return jsonify({

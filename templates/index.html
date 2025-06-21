@@ -19,7 +19,7 @@
                         Image Prompt Extractor
                     </h1>
                     <p class="lead text-muted">
-                        Extract descriptive prompts from images using Google Gemini Vision AI
+                        Comprehensive image analysis with detailed visual descriptions using Google Gemini Vision AI
                     </p>
                 </div>
             </div>
@@ -66,11 +66,26 @@
                                 <div class="card h-100">
                                     <div class="card-header bg-info text-white">
                                         <i class="fas fa-quote-left me-2"></i>
-                                        <strong>Generated Prompt</strong>
+                                        <strong>
+                                            {% if analysis_type == 'comprehensive' %}
+                                                Comprehensive Analysis
+                                            {% else %}
+                                                Generated Prompt
+                                            {% endif %}
+                                        </strong>
+                                        {% if analysis_type == 'comprehensive' %}
+                                        <span class="badge bg-success ms-2">
+                                            <i class="fas fa-microscope me-1"></i>Detailed
+                                        </span>
+                                        {% endif %}
                                     </div>
                                     <div class="card-body" style="min-height: 300px;">
                                         <div class="p-3 bg-light rounded" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; word-wrap: break-word; height: 100%; overflow-y: auto;">
-                                            {{ prompt }}
+                                            {% if analysis_type == 'comprehensive' %}
+                                                {{ prompt|replace('\n', '<br>')|safe }}
+                                            {% else %}
+                                                {{ prompt }}
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -182,12 +197,30 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Generated Prompt:</label>
+                            <label class="form-label fw-bold">
+                                {% if analysis_type == 'comprehensive' %}
+                                    Comprehensive Analysis:
+                                {% else %}
+                                    Generated Prompt:
+                                {% endif %}
+                            </label>
                             <div class="alert alert-light border">
                                 <i class="fas fa-quote-left me-2 text-muted"></i>
-                                <span class="prompt-text">{{ prompt }}</span>
+                                <span class="prompt-text">
+                                    {% if analysis_type == 'comprehensive' %}
+                                        {{ prompt|replace('\n', '<br>')|safe }}
+                                    {% else %}
+                                        {{ prompt }}
+                                    {% endif %}
+                                </span>
                                 <i class="fas fa-quote-right ms-2 text-muted"></i>
                             </div>
+                            {% if analysis_type == 'comprehensive' %}
+                            <div class="text-muted small">
+                                <i class="fas fa-microscope me-1"></i>
+                                This analysis covers image type, composition, subjects, lighting, colors, emotional impact, and technical elements.
+                            </div>
+                            {% endif %}
                         </div>
                         <div class="d-flex gap-2">
                             <button type="button" class="btn btn-outline-secondary" onclick="copyToClipboard('{{ prompt|replace("'", "\\'") }}')">
