@@ -1,0 +1,103 @@
+Please analyze the image using the following detailed criteria:
+
+1. Color Schemes
+What are the dominant colors?
+
+Are there contrasts, harmonies, or complementary colors?
+
+How do the colors influence the mood, focus, or emotion of the image?
+
+2. Objects
+What are the primary subjects or objects in the image?
+
+What are their defining features or roles?
+
+Are there background or secondary elements that add context, symbolism, or depth?
+
+3. Textures
+What textures or surface qualities can you observe?
+
+Are there patterns, materials, or visual effects that enhance the tactile or visual experience?
+
+4. Emotions
+What is the emotional tone or atmosphere of the image?
+
+Are there human or animal expressions, postures, or gestures that convey emotion?
+
+How does the emotional content align with the composition or lighting?
+
+5. Composition
+Is the image balanced, asymmetrical, or centered?
+
+Does it follow the rule of thirds, symmetry, or other compositional principles?
+
+What perspective or angle is used (e.g., bird’s eye, eye-level, low-angle), and how does it influence viewer perception?
+
+6. Lighting
+What is the light source (natural or artificial)?
+
+Is the lighting soft or harsh, warm or cool?
+
+How does it interact with the subjects and shadows?
+
+7. Context
+What is the setting (indoor/outdoor)?
+
+What time of day, season, or weather conditions are shown?
+
+Are there cultural, historical, or geographical clues that add meaning?
+
+8. Action
+Is there any movement or implied motion in the image?
+
+What are the subjects doing or interacting with?
+
+How do actions contribute to the story or message?
+
+9. Style
+What artistic style is used (e.g., realism, surrealism, impressionism, minimalism, digital art)?
+
+Are there notable techniques (e.g., brushwork, pixelation, line quality, filters)?
+
+How does the style affect the image’s interpretation?
+
+10. Narrative
+What story or scenario is being told or implied?
+
+What themes, metaphors, or symbols are present?
+
+How might different viewers interpret the narrative differently?
+
+11. Symbolism
+Are there symbolic objects, gestures, or arrangements?
+
+What abstract ideas or cultural meanings might they represent?
+
+12. Spatial Depth
+How is a sense of space or distance created (e.g., overlapping, size scaling, atmospheric perspective)?
+
+Does the image feel flat or deep?
+
+13. Focal Point
+Where does the viewer’s eye go first?
+
+How is attention drawn (via contrast, placement, light, or lines)?
+
+Is the focal point clearly defined or intentionally ambiguous?
+
+14. Line and Shape
+What types of lines (horizontal, vertical, curved, diagonal) and shapes (geometric, organic) are used?
+
+How do they guide movement, emotion, or structure within the image?
+
+15. Typography (if text is present)
+What fonts or lettering styles are used?
+
+How does the typography relate to the visual tone and content?
+
+Is it decorative, functional, or symbolic?
+
+16. Sound and Sensory Cues (for multimedia/interactive)
+Are there any sounds or sensory cues (if it's a video or digital artwork)?
+
+How do they support the visual elements and viewer immersion?
