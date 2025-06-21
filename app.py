@@ -5,6 +5,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
 from optimized_analyzer import OptimizedImageAnalyzer
 from comprehensive_analyzer import ComprehensiveImageAnalyzer
+from enhanced_analyzer import EnhancedImageAnalyzer
 import tempfile
 import uuid
 
@@ -22,9 +23,10 @@ app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024  # 32MB max file size for be
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'tiff', 'tif', 'svg', 'ico', 'heic', 'heif', 'avif'}
 UPLOAD_FOLDER = tempfile.gettempdir()
 
-# Initialize both analyzers - use comprehensive for detailed analysis
+# Initialize all analyzers - enhanced analyzer provides best results
 analyzer = OptimizedImageAnalyzer()  # Keep for backward compatibility
-comprehensive_analyzer = ComprehensiveImageAnalyzer()  # New detailed analyzer
+comprehensive_analyzer = ComprehensiveImageAnalyzer()  # Detailed analyzer
+enhanced_analyzer = EnhancedImageAnalyzer()  # Enhanced analyzer with 16-point criteria
 
 def allowed_file(filename):
     """Check if the uploaded file has an allowed extension."""
@@ -60,8 +62,13 @@ def analyze_image():
         
         prompt = None
         
-        # Check if comprehensive analyzer is available, otherwise fall back
-        active_analyzer = comprehensive_analyzer if comprehensive_analyzer.is_configured() else analyzer
+        # Use enhanced analyzer as primary, with fallbacks
+        if enhanced_analyzer.is_configured():
+            active_analyzer = enhanced_analyzer
+        elif comprehensive_analyzer.is_configured():
+            active_analyzer = comprehensive_analyzer
+        else:
+            active_analyzer = analyzer
         result = None
         
         if image_url:
@@ -183,8 +190,13 @@ def api_analyze_image():
             try:
                 uploaded_file.save(file_path)
                 logger.info(f"API: Analyzing uploaded image: {filename}")
-                # Use comprehensive analyzer for API requests
-                active_analyzer = comprehensive_analyzer if comprehensive_analyzer.is_configured() else analyzer
+                # Use enhanced analyzer for API requests as primary choice
+                if enhanced_analyzer.is_configured():
+                    active_analyzer = enhanced_analyzer
+                elif comprehensive_analyzer.is_configured():
+                    active_analyzer = comprehensive_analyzer
+                else:
+                    active_analyzer = analyzer
                 result = active_analyzer.analyze_from_file(file_path)
                 
                 # Handle response format differences between analyzers

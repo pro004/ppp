@@ -19,7 +19,7 @@
                         Image Prompt Extractor
                     </h1>
                     <p class="lead text-muted">
-                        Extract detailed visual descriptions from images using Google Gemini Vision AI
+                        Extract comprehensive visual descriptions using advanced 16-point analysis criteria with Google Gemini Vision AI
                     </p>
                 </div>
             </div>
@@ -203,8 +203,52 @@
         </div>
         {% endif %}
 
-        <!-- API Documentation -->
+        <!-- Analysis Criteria -->
         <div class="row justify-content-center mt-5">
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-microscope me-2"></i>
+                            Enhanced 16-Point Analysis Criteria
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">Our enhanced analyzer examines images using comprehensive visual criteria for maximum accuracy:</p>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-palette text-primary me-2"></i><strong>Color Schemes:</strong> Dominant colors, harmonies, emotional impact</li>
+                                    <li class="mb-2"><i class="fas fa-cube text-primary me-2"></i><strong>Objects:</strong> Primary subjects, features, contextual elements</li>
+                                    <li class="mb-2"><i class="fas fa-hand-paper text-primary me-2"></i><strong>Textures:</strong> Surface qualities, patterns, materials</li>
+                                    <li class="mb-2"><i class="fas fa-heart text-primary me-2"></i><strong>Emotions:</strong> Atmosphere, expressions, emotional tone</li>
+                                    <li class="mb-2"><i class="fas fa-th text-primary me-2"></i><strong>Composition:</strong> Balance, symmetry, rule of thirds</li>
+                                    <li class="mb-2"><i class="fas fa-lightbulb text-primary me-2"></i><strong>Lighting:</strong> Sources, intensity, shadows, effects</li>
+                                    <li class="mb-2"><i class="fas fa-map-marker text-primary me-2"></i><strong>Context:</strong> Setting, time, weather, cultural elements</li>
+                                    <li class="mb-2"><i class="fas fa-running text-primary me-2"></i><strong>Action:</strong> Movement, interactions, activities</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-paint-brush text-primary me-2"></i><strong>Style:</strong> Artistic approach, techniques, interpretation</li>
+                                    <li class="mb-2"><i class="fas fa-book-open text-primary me-2"></i><strong>Narrative:</strong> Story elements, themes, metaphors</li>
+                                    <li class="mb-2"><i class="fas fa-star text-primary me-2"></i><strong>Symbolism:</strong> Symbolic objects, cultural meanings</li>
+                                    <li class="mb-2"><i class="fas fa-expand text-primary me-2"></i><strong>Spatial Depth:</strong> Distance creation, dimensional qualities</li>
+                                    <li class="mb-2"><i class="fas fa-crosshairs text-primary me-2"></i><strong>Focal Points:</strong> Attention direction, visual hierarchy</li>
+                                    <li class="mb-2"><i class="fas fa-vector-square text-primary me-2"></i><strong>Line & Shape:</strong> Types, guidance, structural elements</li>
+                                    <li class="mb-2"><i class="fas fa-font text-primary me-2"></i><strong>Typography:</strong> Text styles, visual relationship</li>
+                                    <li class="mb-2"><i class="fas fa-volume-up text-primary me-2"></i><strong>Sensory:</strong> Implied sounds, immersive elements</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Documentation -->
+        <div class="row justify-content-center mt-4">
             <div class="col-lg-8">
                 <div class="card">
                     <div class="card-header">
@@ -233,7 +277,7 @@
                             <pre class="bg-dark text-light p-3 rounded"><code>{
   "success": true,
   "prompt": "A detailed description of the image...",
-  "analysis_type": "comprehensive"
+  "analysis_type": "enhanced_comprehensive"
 }</code></pre>
                         </div>
                         
