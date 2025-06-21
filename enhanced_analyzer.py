@@ -114,11 +114,12 @@ class EnhancedImageAnalyzer:
 
 CRITICAL REQUIREMENTS:
 - Describe EXACT positioning of people/objects (left, right, center, behind, in front, seated, standing, etc.)
-- Include DETAILED body positioning: posture, stance, orientation, lean, tilt, body angle
-- Describe body expressions and language: confident, relaxed, tense, open, closed, dominant, submissive
-- Detail facial expressions: eyes (open/closed/squinting), mouth (smiling/frowning/neutral), eyebrows, cheeks
-- Include hand and arm positions: crossed, open, gesturing, pointing, resting, holding
-- Describe leg positioning: crossed, straight, bent, wide stance, close together
+- Include DETAILED body positioning: posture, stance, orientation, lean, tilt, body angle, shoulder position, spine alignment
+- Describe comprehensive body expressions and language: confident, relaxed, tense, open, closed, dominant, submissive, defensive, inviting, assertive, withdrawn, energetic, tired, alert, distracted
+- Detail facial expressions: eyes (open/closed/squinting/wide/narrow), mouth (smiling/frowning/neutral/parted/pursed), eyebrows (raised/lowered/furrowed), cheeks (flushed/pale), jaw (clenched/relaxed)
+- Include detailed hand and arm positions: crossed, open, gesturing, pointing, resting, holding, fidgeting, clenched, relaxed, reaching, defensive, welcoming
+- Describe precise leg positioning: crossed, straight, bent, wide stance, close together, shifted weight, balanced, unbalanced
+- Add micro-expressions and subtle body cues: head tilt, shoulder tension, breathing patterns, muscle tension, overall energy level
 - Include ALL visible clothing details, hair style and color, accessories
 - Preserve ALL background elements, colors, lighting, and setting details
 - Keep ALL descriptive information - DO NOT remove or truncate important visual details
@@ -280,9 +281,9 @@ CRITICAL REQUIREMENTS:
             parts = [part.strip() for part in text.split(',') if part.strip()]
             text = ', '.join(parts)
             
-            # Smart truncation to keep under 800-900 characters while preserving body details
+            # Smart truncation to keep under 900 characters while preserving body details
             if len(text) > 900:
-                text = self._smart_truncate_detailed(text, 880)
+                text = self._smart_truncate_detailed(text, 900)
             
             return text
             
@@ -299,15 +300,18 @@ CRITICAL REQUIREMENTS:
         essential_parts = []
         char_count = 0
         
-        # High priority keywords for essential elements
+        # High priority keywords for essential elements including detailed body language
         high_priority = [
             'woman', 'man', 'person', 'girl', 'boy', 'character', 'figure',
             'left', 'right', 'center', 'behind', 'front', 'seated', 'standing', 'positioned',
-            'posture', 'stance', 'lean', 'tilt', 'orientation', 'body', 'pose',
-            'confident', 'relaxed', 'tense', 'open', 'closed', 'dominant', 'submissive',
-            'eyes', 'mouth', 'smiling', 'frowning', 'expression', 'facial',
-            'arms', 'hands', 'crossed', 'gesturing', 'pointing', 'holding',
-            'legs', 'straight', 'bent', 'wide', 'close',
+            'posture', 'stance', 'lean', 'tilt', 'orientation', 'body', 'pose', 'shoulder', 'spine',
+            'confident', 'relaxed', 'tense', 'open', 'closed', 'dominant', 'submissive', 'defensive', 'inviting',
+            'assertive', 'withdrawn', 'energetic', 'tired', 'alert', 'distracted',
+            'eyes', 'mouth', 'smiling', 'frowning', 'expression', 'facial', 'eyebrows', 'cheeks', 'jaw',
+            'squinting', 'wide', 'narrow', 'parted', 'pursed', 'raised', 'lowered', 'furrowed', 'clenched',
+            'arms', 'hands', 'crossed', 'gesturing', 'pointing', 'holding', 'fidgeting', 'reaching', 'welcoming',
+            'legs', 'straight', 'bent', 'wide', 'close', 'weight', 'balanced', 'shifted',
+            'head', 'tension', 'breathing', 'muscle', 'energy',
             'hair', 'face', 'clothing', 'outfit', 'dress', 'shirt',
             'anime', 'digital', 'realistic', 'illustration', 'portrait'
         ]
