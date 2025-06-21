@@ -79,71 +79,23 @@ class ComprehensiveImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Comprehensive visual analysis prompt
-            comprehensive_prompt = """Analyze this image in comprehensive detail, covering ALL key aspects:
+            # Concise tag-based analysis prompt
+            comprehensive_prompt = """Analyze this image and provide ONLY comma-separated tags in this exact format:
 
-**1. IMAGE TYPE & STYLE:**
-- Identify the type of image (human, animal, anime character, object, landscape, abstract art, architecture, etc.)
-- Specify if it's realistic, stylized, cartoonish, or another artistic approach
-- Note the artistic style (photography, digital art, painting, sketch, 3D render, etc.)
+image_type, art_style, subject_count, subject_details, clothing_details, pose_action, background_setting, lighting_type, color_palette, mood_atmosphere
 
-**2. SUBJECT ANALYSIS:**
-For humans: Describe age range, apparent gender, ethnicity, facial features, hairstyle and color, clothing details, pose, body language, expression, and any distinguishing traits or accessories.
+Rules:
+- Use underscores instead of spaces in multi-word tags
+- Be precise and concise
+- Count subjects accurately (1_woman, 2_men, etc.)
+- Describe clothing clearly (nude, topless, shirt, dress, etc.)
+- Include key colors and lighting
+- No explanations, only tags
+- Maximum 50 tags total
 
-For anime characters: Describe the art style, facial features, eye color and style, hairstyle and color, clothing and outfit details, facial expression, pose, and background setting.
+Example format: anime, drawing, 1_woman, 1_man, woman_mostly_nude, man_dark_shirt, embracing, intimate_pose, bedroom_background, soft_lighting, purple_tones, romantic_mood
 
-For objects: Describe type, shape, size, material, color, condition, function, and any visible text or markings.
-
-For landscapes: Include setting type (urban, rural, natural), time of day, weather conditions, elements present (trees, mountains, water, animals), and overall mood.
-
-For abstract art: Focus on colors, shapes, patterns, mood, symbolism, artistic technique, and emotional impact.
-
-**3. COMPOSITION & TECHNICAL ELEMENTS:**
-- Framing and perspective (close-up, wide shot, bird's eye, etc.)
-- Focus and depth of field (what's sharp vs blurred)
-- Symmetry, balance, and leading lines
-- Rule of thirds application
-- Foreground, middle ground, and background elements
-
-**4. LIGHTING & ATMOSPHERE:**
-- Light source(s) and direction (natural/artificial, front/back/side lighting)
-- Quality of light (soft, harsh, diffused, dramatic)
-- Shadows and highlights
-- Time of day indicators
-- Weather and atmospheric conditions
-
-**5. COLOR & TEXTURE:**
-- Dominant color palette and temperature (warm, cool, neutral)
-- Color harmony and contrast
-- Texture descriptions (smooth, rough, glossy, matte, fabric, metal, etc.)
-- Overall tone (bright, dark, vibrant, muted, high contrast, low contrast)
-
-**6. BACKGROUND & ENVIRONMENT:**
-- Detailed background description
-- Relationship between subject and environment
-- Spatial relationships and positioning
-- Environmental context and setting
-
-**7. EMOTIONAL & SYMBOLIC IMPACT:**
-- Mood and atmosphere conveyed
-- Emotional response evoked
-- Symbolic elements or themes
-- Cultural or contextual significance
-- Message or story being told
-
-**8. MOVEMENT & ACTION:**
-- Any motion or action captured
-- Dynamic elements vs static composition
-- Energy level and movement direction
-- Interaction between elements
-
-**9. TECHNICAL QUALITY & EFFECTS:**
-- Image quality and clarity
-- Any visual effects or filters applied
-- Processing style (natural, HDR, vintage, etc.)
-- Notable technical aspects
-
-Provide a detailed, nuanced description that captures all visual, emotional, and contextual elements. Be specific about spatial relationships, precise colors, exact positioning, and observable details. Focus on what you can clearly see and analyze."""
+Generate tags for this image now:"""
             
             payload = {
                 "contents": [{
@@ -158,10 +110,10 @@ Provide a detailed, nuanced description that captures all visual, emotional, and
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.2,
-                    "topK": 20,
-                    "topP": 0.8,
-                    "maxOutputTokens": 2048
+                    "temperature": 0.1,
+                    "topK": 10,
+                    "topP": 0.5,
+                    "maxOutputTokens": 400
                 }
             }
             
@@ -174,17 +126,17 @@ Provide a detailed, nuanced description that captures all visual, emotional, and
             if 'candidates' in result and result['candidates']:
                 text = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
-                # Clean up the response while preserving comprehensive content
-                logger.debug(f"Raw comprehensive analysis response: {text[:300]}...")
+                # Clean up the tag-based response
+                logger.debug(f"Raw tag response: {text[:200]}...")
                 
-                # Remove common prefixes that don't add value
+                # Remove common prefixes and clean formatting
                 prefixes_to_remove = [
-                    "Here's a comprehensive analysis of the image:",
-                    "Here's a detailed analysis:",
-                    "Analysis of the image:",
-                    "Comprehensive analysis:",
-                    "**Analysis:**",
-                    "Looking at this image,"
+                    "Here are the tags:",
+                    "Tags:",
+                    "Analysis:",
+                    "Here's the analysis:",
+                    "Generate tags for this image now:",
+                    "The tags are:",
                 ]
                 
                 for prefix in prefixes_to_remove:
@@ -192,14 +144,35 @@ Provide a detailed, nuanced description that captures all visual, emotional, and
                         text = text[len(prefix):].strip()
                         break
                 
-                # Clean up markdown formatting while preserving structure
-                text = text.replace('**', '').replace('*', '')
+                # Clean up formatting
+                text = text.replace('**', '').replace('*', '').replace('\n', ' ')
+                text = text.replace('- ', '').replace('• ', '')
                 
-                # Ensure the analysis is comprehensive and detailed
-                if len(text) < 200:
-                    logger.warning(f"Analysis seems too brief: {len(text)} characters")
+                # Ensure it's comma-separated tags
+                if ':' in text:
+                    # Extract only the tag content after colons
+                    parts = text.split(',')
+                    clean_parts = []
+                    for part in parts:
+                        if ':' in part:
+                            clean_parts.append(part.split(':')[-1].strip())
+                        else:
+                            clean_parts.append(part.strip())
+                    text = ', '.join(clean_parts)
                 
-                logger.info(f"Generated comprehensive analysis: {len(text)} characters")
+                # Clean spacing and formatting
+                text = ', '.join([tag.strip() for tag in text.split(',') if tag.strip()])
+                
+                # Remove any remaining unwanted phrases
+                unwanted = ['the image shows', 'we can see', 'appears to be', 'seems to be']
+                for phrase in unwanted:
+                    text = text.replace(phrase, '')
+                
+                # Fix common formatting issues
+                text = text.replace(' ,', ',').replace(',,', ',')
+                text = text.strip().rstrip('.,;:')
+                
+                logger.info(f"Generated tag-based analysis: {len(text)} characters")
                 return {"success": True, "prompt": text, "analysis_type": "comprehensive"}
                 
             else:
