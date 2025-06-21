@@ -82,26 +82,36 @@ class EnhancedImageAnalyzer:
 
 CRITICAL RULE: DESCRIBE THE IMAGE AS IT IS - DO NOT CHANGE OR MODIFY ANYTHING
 
-BODY POSITIONING (Critical - be accurate, only describe visible parts):
-- Exact posture: only describe if clearly visible - sitting, standing, lying, leaning, crouching, kneeling (specify surface/object only if visible)
-- Spine alignment: straight, curved, arched, slouched, tilted (only if visible)
-- Shoulder position: level, raised, dropped, rolled forward, back (only if visible)
-- Head orientation: facing forward, turned left/right, tilted, looking up/down (only if visible)
-- Arm placement: at sides, crossed, raised, extended, bent, one up/one down (only if arms are visible)
-- Hand position: describe exact hand placement - open palms, closed fists, pointing direction, touching specific objects or body parts, hand gestures, finger positions, what each hand is doing separately (only if hands are clearly visible)
-- Leg positioning: together, apart, crossed, bent, straight, weight distribution (only if legs are visible)
-- Foot placement: flat, on tiptoes, one foot forward, turned in/out (only if feet are visible)
-- IMPORTANT: Do not describe body parts that are cropped out, hidden, or not clearly shown - describe exactly what you see without changing anything
+BODY ANALYSIS (Critical - describe every visible body part precisely):
+- Primary posture: sitting, standing, lying, leaning, crouching, kneeling with exact surface/support
+- Torso orientation: facing forward, turned left/right, angled, twisted
+- Spine posture: straight, curved forward, arched back, slouched, tilted direction
+- Shoulder details: level/uneven, raised/lowered, rolled forward/back, one higher than other
+- Head positioning: facing direction, tilt angle, chin up/down, turned degree
+- Neck position: straight, tilted, craned forward/back
+- Arm configuration: both arms position, left arm specifically, right arm specifically, bent/straight angles
+- Hand positions: each hand separately - open/closed, pointing, touching what, finger positions, gestures, grip on objects
+- Torso lean: forward/backward/sideways, upright, twisted
+- Hip position: level, tilted, weight shifted to which side
+- Leg stance: both legs, left leg position, right leg position, together/apart distance, crossed/uncrossed
+- Knee positions: bent/straight angles, one forward/back, kneeling position
+- Foot placement: both feet, left foot, right foot, flat/angled, direction pointing, on ground/elevated
+- Weight distribution: which leg/side carries weight, balanced/unbalanced stance
 
-BODY LANGUAGE (only if clearly visible):
-- Overall energy and emotional state visible through posture
+BODY LANGUAGE & STYLE:
+- Overall energy: relaxed, tense, confident, nervous, alert, tired, energetic
+- Posture confidence: confident stance, uncertain posture, defensive, open, closed
+- Emotional indicators: happy posture, sad slouch, angry tension, surprise, neutral
+- Body openness: arms open/closed, torso facing toward/away, welcoming/guarded stance
+- Movement quality: static, dynamic, fluid, rigid, graceful, awkward
+- Style expression: formal posture, casual stance, athletic position, artistic pose
 
 PHYSICAL DETAILS:
 - Hair color and style exactly as visible
 - Eye state: open, closed, looking direction, expression
 - Clothing: garment types, colors, patterns, textures, fit, brand logos, condition
 - Skin tone as actually appears
-- Body positioning: visible limbs and their exact positions as shown
+- Anatomical details: precise positioning of each visible body segment and joint angles
 - Accessories and objects: jewelry, glasses, bags, shoes, held items
 
 BACKGROUND & STYLE:
