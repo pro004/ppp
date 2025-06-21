@@ -72,21 +72,18 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Comprehensive 10-point analysis prompt
-            prompt = """Analyze this image comprehensively and describe using comma-separated tags covering:
+            # Accurate visual analysis prompt
+            prompt = """Look carefully at this image and describe EXACTLY what you see. Generate comma-separated tags for:
 
-1. Image Type: human/anime/object/landscape/abstract/architecture/animal/nature, style (realistic/stylized/cartoonish)
-2. Subject Details: age, gender, ethnicity, facial features, hairstyle, clothing, accessories, expression, pose
-3. Composition: framing (close-up/wide-angle), focus, perspective, lighting (natural/artificial, shadows, highlights)
-4. Colors & Textures: dominant colors, contrast, saturation, surface textures, tone
-5. Background & Environment: setting, depth, background elements
-6. Artistic Style: medium, art movement, effects, technique
-7. Emotional Impact: mood, feelings evoked, symbolism, cultural significance
-8. Movement & Action: static/dynamic, motion elements, gestures, energy
-9. Composition Techniques: rule of thirds, symmetry, leading lines, balance
-10. Unique Features: special objects, interactions, framing details
+What type of image: photo, anime, drawing, etc.
+Who/what is in the image: count people accurately, describe their actual appearance
+What they're wearing: actual clothing visible
+What they're doing: actual poses, expressions, actions
+Where they are: actual setting, background
+Colors and lighting: what you actually see
+Style: realistic, anime, artistic style
 
-Generate detailed comma-separated tags covering all visible aspects."""
+Only describe what is clearly visible. Be accurate about gender, clothing, poses, and setting. Don't assume or add details not clearly shown."""
             
             payload = {
                 "contents": [{
@@ -101,10 +98,10 @@ Generate detailed comma-separated tags covering all visible aspects."""
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.2,
-                    "topK": 20,
-                    "topP": 0.7,
-                    "maxOutputTokens": 500
+                    "temperature": 0.1,
+                    "topK": 10,
+                    "topP": 0.5,
+                    "maxOutputTokens": 300
                 }
             }
             
@@ -133,47 +130,41 @@ Generate detailed comma-separated tags covering all visible aspects."""
                         text = text[len(prefix):].strip()
                         break
                 
-                # Clean numbered format and extract tags
-                if any(marker in text for marker in ['1.', '2.', '**1.', '**2.']):
-                    # Remove markdown formatting first
-                    text = text.replace('**', '').replace('*', '')
-                    
-                    # Extract content from numbered sections
-                    import re
-                    # Find all content after numbers and colons
-                    pattern = r'\d+\.\s*[^:]*:\s*([^0-9]+?)(?=\d+\.|$)'
-                    matches = re.findall(pattern, text, re.DOTALL)
-                    
-                    if matches:
-                        # Join all extracted content
-                        extracted_content = []
-                        for match in matches:
-                            cleaned = match.strip().replace('\n', ' ')
-                            if cleaned:
-                                extracted_content.append(cleaned)
-                        text = ', '.join(extracted_content)
-                    else:
-                        # Fallback: remove section headers manually
-                        lines = text.split('\n')
-                        content_lines = []
-                        for line in lines:
-                            line = line.strip()
-                            if line and not any(skip in line for skip in [
-                                '1.', '2.', '3.', '4.', '5.', '6.', '7.', '8.', '9.', '10.',
-                                'Image Type:', 'Subject Details:', 'Composition:'
-                            ]):
-                                content_lines.append(line)
-                        text = ' '.join(content_lines)
-                
-                # Basic formatting cleanup
+                # Clean response and extract meaningful tags
                 text = text.replace('**', '').replace('*', '')
-                text = text.replace('; ', ', ').replace(': ', ', ')
-                text = ' '.join(text.split())
-                text = text.strip().rstrip('.,;:')
                 
-                # Final validation
-                if len(text) < 30:
-                    logger.error(f"Final text too short after cleaning: '{text}'")
+                # If structured response, extract tag content only
+                if any(indicator in text.lower() for indicator in ['what type:', 'who/what:', 'wearing:', 'doing:', 'where:']):
+                    parts = text.split('\n')
+                    clean_tags = []
+                    
+                    for part in parts:
+                        if ':' in part:
+                            tag_content = part.split(':', 1)[1].strip()
+                            if tag_content and not tag_content.lower().startswith(('what', 'who', 'where')):
+                                clean_tags.append(tag_content)
+                    
+                    if clean_tags:
+                        text = ', '.join(clean_tags)
+                
+                # Remove common filler phrases that add no value
+                unwanted_phrases = [
+                    'clearly visible', 'can be seen', 'appears to be', 'seems to be',
+                    'what you actually see', 'actual', 'visible in the image',
+                    'in this image', 'the image shows'
+                ]
+                
+                for phrase in unwanted_phrases:
+                    text = text.replace(phrase, '')
+                
+                # Clean formatting
+                text = text.replace('; ', ', ').replace(': ', ', ')
+                text = text.replace(' and ', ', ').replace('  ', ' ')
+                text = ' '.join(text.split()).strip().rstrip('.,;:')
+                
+                # Validate final result
+                if len(text) < 20:
+                    logger.error(f"Processed text too short: '{text}'")
                     return None
                 
                 # Clean and format
