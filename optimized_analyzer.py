@@ -79,7 +79,7 @@ What type of image: photo, anime, drawing, etc.
 Who/what is in the image: count people accurately, describe their actual appearance
 What they're wearing: actual clothing visible
 What they're doing: actual poses, expressions, actions - describe exactly what you see without changing anything (only describe visible body parts, not hidden or cropped areas)
-Where they are: actual setting, specific background objects, furniture, walls, architectural elements, environmental details, exact background color names and intensity, textures and patterns
+Where they are: actual setting with position details (sitting/standing/lying on what), specific background objects (furniture, walls, windows, doors, decorative items), architectural elements (ceiling, floor, moldings), environmental details (indoor/outdoor, room type), exact background color names and intensity, textures and patterns
 Colors and lighting: what you actually see
 Style: realistic, anime, artistic style
 

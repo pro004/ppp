@@ -83,7 +83,7 @@ class EnhancedImageAnalyzer:
 CRITICAL RULE: DESCRIBE THE IMAGE AS IT IS - DO NOT CHANGE OR MODIFY ANYTHING
 
 BODY POSITIONING (Critical - be accurate, only describe visible parts):
-- Exact posture: sitting, standing, lying, leaning, crouching, kneeling (only if clearly visible)
+- Exact posture: sitting (specify what on - chair, floor, bed, couch), standing (specify stance), lying (on back/side/stomach, specify surface), leaning (against what), crouching, kneeling (only if clearly visible in image)
 - Spine alignment: straight, curved, arched, slouched, tilted (only if visible)
 - Shoulder position: level, raised, dropped, rolled forward, back (only if visible)
 - Head orientation: facing forward, turned left/right, tilted, looking up/down (only if visible)
@@ -105,19 +105,20 @@ PHYSICAL DETAILS:
 - Eye state: open, closed, looking direction, expression
 - Clothing items and colors specifically visible
 - Skin tone as actually appears
-- Body parts positioning: describe each visible limb's exact position and orientation
+- Body parts positioning: describe each visible limb's exact position, orientation, and angle relative to the body and camera
 - Visible body proportions and how body parts relate to each other spatially
+- Focus carefully on actual body object positions - arms, legs, torso, head as they actually appear
 - Any accessories or objects being held/worn
 
-BACKGROUND DETAILS (Critical - be comprehensive):
-- Specific background objects: furniture, walls, windows, doors, decorative items
-- Background colors and patterns: exact color names (white, beige, blue, etc.), color intensity (light, dark, bright, muted), patterns (stripes, dots, floral), textures (smooth, rough, fabric), wall finishes (painted, wallpaper, wood)
-- Architectural elements: ceiling details, floor type, moldings, fixtures
-- Environmental setting: indoor/outdoor, room type, natural elements, weather
-- Background depth: what's visible behind main subject at different distances
-- Background lighting: shadows, reflections, light sources, brightness variations
-- Background text or signage: any visible words, symbols, or graphics
-- Background spatial relationship: what's to the left, right, above, below main subject
+BACKGROUND DETAILS (Critical - be comprehensive and accurate):
+- Specific background objects: furniture (chairs, tables, beds, shelves), walls, windows, doors, decorative items, plants, artwork
+- Background colors and patterns: exact color names (pure white, cream, light blue, dark gray, etc.), color intensity (bright, muted, pastel, vibrant), patterns (stripes, dots, floral, geometric), textures (smooth paint, rough texture, fabric, wood grain), wall finishes (painted walls, wallpaper, brick, wood paneling)
+- Architectural elements: ceiling details (height, color, texture), floor type (hardwood, carpet, tile, concrete), moldings, baseboards, crown molding, fixtures (light fixtures, outlets, switches)
+- Environmental setting: indoor/outdoor specification, room type (bedroom, living room, kitchen, office, studio), natural elements (trees, sky, grass), weather conditions if outdoor
+- Background depth: multiple layers - what's immediately behind subject, mid-distance objects, far background elements
+- Background lighting: natural vs artificial light, shadows cast on walls, reflections on surfaces, light sources visible (lamps, windows), brightness variations across background
+- Background text or signage: any visible words, letters, symbols, logos, signs, posters, books
+- Background spatial relationship: detailed description of what's positioned to the left, right, above, and below the main subject, including distance and relative positioning
 
 SETTING & STYLE:
 - Lighting quality and direction
