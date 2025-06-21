@@ -79,28 +79,42 @@ class ComprehensiveImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Enhanced detailed prompt with spatial positioning and background focus
-            comprehensive_prompt = """Analyze this image and describe exactly what you see in precise detail. Focus on factual observations only:
+            # Streamlined comprehensive prompt matching enhanced analyzer
+            comprehensive_prompt = """Analyze this image and describe exactly what you see. Use comma-separated format.
 
-EXACT POSITIONING: Describe precise body positioning - posture, torso orientation, spine alignment, shoulder positions, head direction, arm configurations, hand positions, leg stance, foot placement, weight distribution. Use specific directional terms and describe each visible body part's exact position and angle. CRITICAL: Only describe visible body parts exactly as shown.
+IMAGE QUALITY: Describe resolution, clarity, lighting quality, focus, grain/noise level
 
-DETAILED VISUAL ELEMENTS: Describe specific clothing details (garment types, colors, patterns, textures, fit, brand logos), hair color and style, facial expressions, eye state (open/closed), skin tone, exact hand placement and finger positions, specific body parts positioning (arms, legs, torso, head as they actually appear), spatial relationships, posture details (sitting on what surface, standing how, lying in what position), accessories (jewelry, glasses, bags, shoes), objects being held, any visible markings.
+BODY POSITIONING (only visible parts):
+- Posture, torso orientation, spine alignment
+- Head direction, arm positions, hand placement
+- Leg stance, foot positioning, weight distribution
 
-BACKGROUND & SETTING: Describe specific background objects (furniture like chairs, tables, beds, shelves, walls, windows, doors, decorative items, plants, artwork), exact background color names and intensity (pure white, cream, light blue, dark gray, bright white, etc.), patterns (stripes, dots, floral, geometric) and textures (smooth paint, rough texture, fabric, wood grain), architectural elements (ceiling height/color/texture, floor type like hardwood/carpet/tile, moldings, baseboards, fixtures), environmental setting (indoor/outdoor specification, room type like bedroom/living room/kitchen/office), background depth with multiple layers, background lighting (natural vs artificial, shadows, reflections, light sources), any visible text or signage, detailed spatial relationships of what's positioned left, right, above, below the main subject.
+APPEARANCE:
+- Hair, eyes, skin tone, facial expression
+- Clothing details, accessories, held objects
 
-ARTISTIC DETAILS: Art style, medium, lighting direction, color palette, shading, line quality, composition framing.
+BACKGROUND:
+- Objects, colors, lighting, spatial layout
 
-TECHNICAL ELEMENTS: Image quality, perspective angle, focus areas, any visible text or watermarks.
+16-POINT CRITERIA (include only if clearly present):
+1. Color Schemes - dominant colors, contrasts
+2. Objects - main subjects, features  
+3. Textures - surface qualities, materials
+4. Emotions - expressions, mood
+5. Composition - balance, framing
+6. Lighting - sources, shadows, quality
+7. Context - setting, environment
+8. Action - movement, activities
+9. Style - artistic approach, medium
+10. Narrative - story elements, themes
+11. Symbolism - symbolic elements
+12. Spatial Depth - layering, distance
+13. Focal Points - attention direction
+14. Line & Shape - structural elements
+15. Typography - visible text, fonts
+16. Sensory Cues - atmosphere, implied sounds
 
-Requirements:
-- Use only factual, observable details
-- Describe positions exactly as they appear in the image
-- Include specific details about clothing, hair, expressions, and poses
-- Note lighting, colors, and artistic style precisely
-- Include background elements only if clearly visible
-- Prioritize accuracy and detail over assumptions
-
-Format: Comma-separated phrases only, 600-800 characters, describing exactly what is visible in the image with detailed accuracy."""
+IMPORTANT: Skip criteria not present. Describe visible objects even if they don't match criteria."""
             
             payload = {
                 "contents": [{
