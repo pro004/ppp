@@ -82,7 +82,7 @@ class ComprehensiveImageAnalyzer:
             # Enhanced detailed prompt with spatial positioning and background focus
             comprehensive_prompt = """Analyze this image and describe exactly what you see in precise detail. Focus on factual observations only:
 
-EXACT POSITIONING: Describe only the body parts and positions that are clearly visible in the image. Do not assume or describe hidden, cropped, or unclear body parts. Use specific directional terms (left, right, center, behind, in front) only for what you can actually see.
+EXACT POSITIONING: Describe the precise position and pose of each person/object as actually seen in the image. Use specific directional terms (left, right, center, behind, in front) and exact body positioning with limb placement. IMPORTANT: Only describe body parts that are clearly visible - do not assume or describe hidden, cropped, or unclear body parts.
 
 DETAILED VISUAL ELEMENTS: Describe clothing details, hair color and style, facial expressions, eye state (open/closed), skin tone, body positioning, hand placement, leg positioning, any visible accessories or markings.
 

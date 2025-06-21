@@ -80,13 +80,16 @@ class EnhancedImageAnalyzer:
             # Enhanced prompt focusing on accurate body positioning and language
             enhanced_prompt = """Create a detailed comma-separated description of this image. Be extremely precise about body positioning and body language.
 
-BODY POSITIONING (Critical - only describe what is clearly visible):
-- Only describe the body parts and positions that are actually visible in the image
-- Do not assume or describe body parts that are hidden, cropped out, or not clearly shown
-- For visible parts: describe exact positioning (sitting/standing only if clearly shown, arm positions only if arms are visible, etc.)
-- Use precise directional terms only for what you can actually see
-- If only upper body is visible, do not describe legs or feet
-- If someone is facing away, do not describe facial features
+BODY POSITIONING (Critical - be accurate, only describe visible parts):
+- Exact posture: sitting, standing, lying, leaning, crouching, kneeling (only if clearly visible)
+- Spine alignment: straight, curved, arched, slouched, tilted (only if visible)
+- Shoulder position: level, raised, dropped, rolled forward, back (only if visible)
+- Head orientation: facing forward, turned left/right, tilted, looking up/down (only if visible)
+- Arm placement: at sides, crossed, raised, extended, bent, one up/one down (only if arms are visible)
+- Hand position: open, closed, pointing, gesturing, resting on specific body parts or objects (only if hands are visible)
+- Leg positioning: together, apart, crossed, bent, straight, weight distribution (only if legs are visible)
+- Foot placement: flat, on tiptoes, one foot forward, turned in/out (only if feet are visible)
+- IMPORTANT: Do not describe body parts that are cropped out, hidden, or not clearly shown
 
 BODY LANGUAGE (Critical - observe actual expression):
 - Overall energy: relaxed, tense, confident, nervous, alert, tired

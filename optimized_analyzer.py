@@ -78,7 +78,7 @@ class OptimizedImageAnalyzer:
 What type of image: photo, anime, drawing, etc.
 Who/what is in the image: count people accurately, describe their actual appearance
 What they're wearing: actual clothing visible
-What they're doing: only describe visible body positions and actions, do not assume hidden or cropped body parts
+What they're doing: actual poses, expressions, actions (only describe visible body parts, not hidden or cropped areas)
 Where they are: actual setting, specific background objects, furniture, walls, architectural elements, environmental details, background colors and textures
 Colors and lighting: what you actually see
 Style: realistic, anime, artistic style
