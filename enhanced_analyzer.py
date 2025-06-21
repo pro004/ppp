@@ -77,42 +77,52 @@ class EnhancedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Streamlined prompt with 16-criteria conditional matching
-            enhanced_prompt = """Analyze this image and describe exactly what you see. Use comma-separated format.
+            # Enhanced prompt for exact object detection with 16-criteria
+            enhanced_prompt = """Look at this image carefully and describe EXACTLY what you observe. Be factual and specific.
 
-IMAGE QUALITY: Describe resolution, clarity, lighting quality, focus, grain/noise level
+MANDATORY SECTIONS:
 
-BODY POSITIONING (only visible parts):
-- Posture, torso orientation, spine alignment
-- Head direction, arm positions, hand placement
-- Leg stance, foot positioning, weight distribution
+IMAGE QUALITY: resolution quality, lighting brightness, focus sharpness, any grain or noise
 
-APPEARANCE:
-- Hair, eyes, skin tone, facial expression
-- Clothing details, accessories, held objects
+EXACT OBJECTS PRESENT:
+- Count and identify each person/animal/object you see
+- Describe their precise positioning and what they're doing
+- Specify exact clothing items, colors, and accessories visible
+- Detail facial features, hair, skin tone, expressions as shown
+- List any objects being held, touched, or interacted with
 
-BACKGROUND:
-- Objects, colors, lighting, spatial layout
+PRECISE POSITIONING:
+- Primary posture (sitting/standing/lying - specify exactly how)
+- Head direction and tilt, eye gaze direction
+- Arm positions, hand placement, finger positions
+- Leg positioning, foot placement, weight distribution
+- Spatial relationships between objects/people
 
-16-POINT CRITERIA (include only if clearly present):
-1. Color Schemes - dominant colors, contrasts
-2. Objects - main subjects, features  
-3. Textures - surface qualities, materials
-4. Emotions - expressions, mood
-5. Composition - balance, framing
-6. Lighting - sources, shadows, quality
-7. Context - setting, environment
-8. Action - movement, activities
-9. Style - artistic approach, medium
-10. Narrative - story elements, themes
-11. Symbolism - symbolic elements
-12. Spatial Depth - layering, distance
-13. Focal Points - attention direction
-14. Line & Shape - structural elements
-15. Typography - visible text, fonts
-16. Sensory Cues - atmosphere, implied sounds
+BACKGROUND DETAILS:
+- Exact colors visible, specific objects present
+- Architectural elements, furniture, decorations
+- Lighting sources, shadows, reflections
+- Text, signs, or writing visible
 
-IMPORTANT: Skip criteria not present. Describe visible objects even if they don't match criteria."""
+16-POINT ANALYSIS (only include if clearly visible):
+1. Color Schemes: dominant colors, color harmony, contrasts
+2. Objects: primary subjects, secondary objects, their characteristics
+3. Textures: fabric, material, surface qualities you can see
+4. Emotions: facial expressions, body language, mood conveyed
+5. Composition: balance, rule of thirds, visual structure
+6. Lighting: light direction, intensity, shadows, highlights
+7. Context: time of day, location type, setting details
+8. Action: movements, activities, interactions happening
+9. Style: photographic/artistic style, technique used
+10. Narrative: story being told, relationship between elements
+11. Symbolism: symbolic objects, meaningful arrangements
+12. Spatial Depth: foreground/background layers, perspective
+13. Focal Points: what draws attention, visual hierarchy
+14. Line & Shape: strong lines, geometric shapes, patterns
+15. Typography: fonts, text style, lettering visible
+16. Sensory Cues: atmosphere, implied sounds, tactile qualities
+
+CRITICAL: Describe only what you actually see. Do not add, assume, or modify anything."""
             
             payload = {
                 "contents": [{

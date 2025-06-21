@@ -72,16 +72,16 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Streamlined prompt matching enhanced analyzer
-            prompt = """Analyze this image and describe exactly what you see. Use comma-separated format.
+            # Enhanced optimized prompt for exact object detection
+            prompt = """Look at this image carefully and describe EXACTLY what you observe. Be factual and specific.
 
-IMAGE QUALITY: resolution, clarity, lighting quality, focus
-BODY POSITIONING: posture, arm/hand positions, leg stance
-APPEARANCE: hair, eyes, clothing, accessories  
-BACKGROUND: objects, colors, lighting, setting
-CRITERIA: include only clearly present elements
+IMAGE QUALITY: resolution, lighting, focus, clarity
+EXACT OBJECTS: count and identify each person/object, their positioning, clothing, accessories
+POSITIONING: posture, head direction, arm/hand positions, leg stance
+BACKGROUND: specific objects, colors, lighting, architectural elements
+16-CRITERIA: include only clearly visible elements
 
-Describe visible objects even if they don't match standard criteria."""
+CRITICAL: Describe only what you actually see. Do not add, assume, or modify anything."""
             
             payload = {
                 "contents": [{
