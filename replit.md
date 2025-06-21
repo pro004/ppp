@@ -96,7 +96,7 @@ The Image Prompt Extractor is a web service that analyzes images and generates c
 - June 19, 2025: Fixed system dependency issues and created simplified image analyzer
 - June 19, 2025: Updated web interface layout for side-by-side image and prompt display
 - June 19, 2025: Enhanced with forensic precision - exact positioning, angles, spatial relationships with precise directional terms (3 sentences, observable facts only)
-- June 21, 2025: Enhanced analyzer with complete body positioning details, limb placement, and comprehensive capture of all visible elements in 700-900 character comma-separated prompts
+- June 21, 2025: Enhanced analyzer with precise body positioning using exact angles and directional terms, added README with API accuracy improvement guidelines
 
 ## User Preferences
 

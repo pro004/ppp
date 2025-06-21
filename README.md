@@ -1,422 +1,112 @@
 # Image Prompt Extractor
 
-A high-performance web service that extracts detailed, accurate prompts from images using Google Gemini Vision AI. Available in both Flask (Python) and Express (Node.js) implementations. Get comprehensive visual descriptions without any unnecessary AI commentary - just pure, detailed image analysis.
+A comprehensive image analysis service that generates detailed, comma-separated descriptive prompts using Google Gemini Vision AI.
 
-## ✨ Features
+## Features
 
-- **Ultra-Accurate Analysis**: Leverages Google Gemini Vision AI for precise image understanding
-- **Clean Output**: Returns only pure visual descriptions without AI prefixes or commentary
-- **Multiple Input Methods**: Supports both image URLs and file uploads
-- **Comprehensive Format Support**: PNG, JPG, JPEG, GIF, WebP, BMP, TIFF, SVG, ICO, HEIC, HEIF, AVIF
-- **Fast Processing**: Optimized for speed with enhanced domain compatibility
-- **RESTful API**: Easy integration with any application
-- **Web Interface**: User-friendly interface for testing and manual analysis
-- **Large File Support**: Handles images up to 32MB
+- **Comprehensive Analysis**: Detailed body positioning, spatial relationships, and environmental context
+- **Precise Positioning**: Exact angles, directional terms, and limb placement descriptions
+- **Multiple Input Methods**: URL or file upload support
+- **RESTful API**: JSON responses for easy integration
+- **Optimized Output**: 700-900 character comma-separated prompts
 
-## 🔑 Gemini API Key Setup
+## API Usage
 
-**IMPORTANT**: This project requires a Google Gemini API key to function.
-
-### 1. Get Your API Key
-1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. Sign in with your Google account
-3. Click "Create API Key"
-4. Copy your generated API key
-
-### 2. Configure the API Key
-Create a `.env` file in the project root and add your API key:
-```bash
-GEMINI_API_KEY=your_actual_api_key_here
-```
-
-Or set it as an environment variable:
-```bash
-export GEMINI_API_KEY="your_actual_api_key_here"
-```
-
-## 🚀 Quick Start
-
-### Choose Your Implementation
-
-#### Option 1: Python/Flask (Default)
-```bash
-# The Flask server runs automatically on port 5000
-# Visit http://localhost:5000
-```
-
-#### Option 2: Node.js/Express
-```bash
-# Install Node.js dependencies (already installed)
-node server.js
-# Visit http://localhost:5000
-```
-
-### API Usage
-
-**Analyze from URL:**
+### Analyze Image from URL
 ```bash
 curl -X POST http://localhost:5000/api/analyze \
   -H "Content-Type: application/json" \
   -d '{"image_url": "https://example.com/image.jpg"}'
 ```
 
-**Response:**
+### Upload and Analyze File
+```bash
+curl -X POST http://localhost:5000/api/analyze \
+  -F "image_file=@image.jpg"
+```
+
+### Response Format
 ```json
 {
   "success": true,
-  "prompt": "A young woman with shoulder-length dark brown hair, fair skin, and expressive eyes stands in a modern urban setting..."
+  "prompt": "anime-style illustration, digital painting medium, young woman seated center-frame, legs spread wide apart...",
+  "analysis_type": "comprehensive"
 }
 ```
 
-### Web Interface
+## Improving API Accuracy
 
-Visit `http://localhost:5000` to use the interactive web interface for:
-- Testing with image URLs
-- Uploading local files
-- Copying generated prompts
-- API documentation
+### 1. Image Quality
+- **High Resolution**: Use images with minimum 512x512 resolution
+- **Clear Focus**: Ensure subjects are in sharp focus
+- **Good Lighting**: Well-lit images produce more accurate descriptions
+- **Minimal Compression**: Use high-quality JPEG or PNG formats
 
-## 📋 API Documentation
+### 2. Image Content Guidelines
+- **Clear Subjects**: Avoid heavily cropped or partially visible subjects
+- **Unobstructed Views**: Minimize overlapping or hidden elements
+- **Stable Positioning**: Clear, defined poses work better than motion blur
+- **Consistent Style**: Similar art styles get more consistent results
 
-### Endpoints
+### 3. Optimal Input Parameters
+- **File Size**: 1-5MB images provide best balance of detail and processing speed
+- **Aspect Ratio**: Standard ratios (16:9, 4:3, 1:1) work best
+- **Color Depth**: Full-color images provide more detailed analysis than grayscale
 
-#### POST `/api/analyze`
+### 4. API Configuration
+- **Temperature Setting**: Lower values (0.05-0.1) for consistent, precise descriptions
+- **Token Limits**: 750+ tokens for comprehensive analysis
+- **Multiple Requests**: For critical analysis, make 2-3 requests and compare results
 
-Analyzes an image and returns a detailed descriptive prompt.
+### 5. Prompt Consistency Tips
+- **Consistent Vocabulary**: The AI learns patterns from similar image types
+- **Stable Lighting**: Images with consistent lighting conditions
+- **Clear Backgrounds**: Uncluttered backgrounds improve subject focus
+- **Standard Poses**: Common poses and positions get more accurate descriptions
 
-**Request Methods:**
+### 6. Error Handling
+- **Retry Logic**: Implement automatic retries for failed requests
+- **Fallback Options**: Have backup analysis methods for edge cases
+- **Validation**: Check response length and content quality
 
-1. **JSON with Image URL:**
-```json
-{
-  "image_url": "https://example.com/image.jpg"
-}
-```
+### 7. Batch Processing
+- **Rate Limiting**: Space requests to avoid quota limits
+- **Queue Management**: Process multiple images systematically
+- **Result Validation**: Compare batch results for consistency
 
-2. **Form Data with File Upload:**
-```
-Content-Type: multipart/form-data
-image_file: [binary file data]
-```
+## Technical Details
 
-**Response Format:**
-```json
-{
-  "success": true,
-  "prompt": "Detailed visual description..."
-}
-```
+- **AI Model**: Google Gemini Vision 1.5 Flash
+- **Max File Size**: 32MB
+- **Supported Formats**: PNG, JPG, JPEG, GIF, WebP, BMP, TIFF, SVG, ICO, HEIC, HEIF, AVIF
+- **Response Time**: 2-10 seconds depending on image complexity
+- **Character Output**: 700-900 characters optimized for prompt generation
 
-**Error Response:**
-```json
-{
-  "success": false,
-  "error": "Error description"
-}
-```
+## Deployment
 
-#### GET `/health`
+The service is configured for deployment on:
+- Replit (native support)
+- Railway
+- Render
+- Vercel
+- Docker
 
-Health check endpoint.
+## Environment Variables
 
-**Response:**
-```json
-{
-  "status": "healthy",
-  "service": "Image Prompt Extractor",
-  "gemini_configured": true
-}
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-- `GEMINI_API_KEY`: Your Google Gemini API key (**REQUIRED** - Get from [Google AI Studio](https://aistudio.google.com/app/apikey))
-- `SESSION_SECRET`: Flask session secret (optional, auto-generated if not provided)
+- `GEMINI_API_KEY`: Google Gemini API key (required)
 - `PORT`: Server port (default: 5000)
-- `NODE_ENV`: Environment mode (development/production)
+- `SESSION_SECRET`: Flask session secret
 
-### Available Implementations
+## Getting Started
 
-#### Flask (Python) - Default
-- **File**: `app.py` (via `main.py`)
-- **Start**: Automatically runs via workflow
-- **Port**: 5000
-- **Features**: Web interface + API endpoints
+1. Set up your Gemini API key
+2. Install dependencies: `pip install -r requirements.txt`
+3. Start the server: `python main.py`
+4. Access the web interface at `http://localhost:5000`
 
-#### Express (Node.js) - Alternative
-- **File**: `server.js`
-- **Start**: `node server.js`
-- **Port**: 5000
-- **Features**: Web interface + API endpoints
+## API Limits and Quotas
 
-Both implementations provide identical functionality and API compatibility.
-
-## 🚀 Deployment Guide
-
-### Deploy to Render (Recommended)
-
-Render provides free hosting for both Python and Node.js applications with easy deployment.
-
-#### Method 1: Deploy Python/Flask Version
-
-1. **Fork or Clone** this repository to your GitHub account
-
-2. **Create a Render Account**
-   - Visit [render.com](https://render.com)
-   - Sign up with your GitHub account
-
-3. **Create a New Web Service**
-   - Click "New +" → "Web Service"
-   - Connect your GitHub repository
-   - Choose the repository containing this project
-
-4. **Configure the Service**
-   - **Name**: `image-prompt-extractor`
-   - **Environment**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt` (leave empty if using pyproject.toml)
-   - **Start Command**: `gunicorn --bind 0.0.0.0:$PORT main:app`
-   - **Instance Type**: `Free`
-
-5. **Add Environment Variables**
-   - Go to "Environment" tab
-   - Add `GEMINI_API_KEY` with your API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
-   - Add `SESSION_SECRET` (or let Render auto-generate it)
-
-6. **Deploy**
-   - Click "Create Web Service"
-   - Wait for deployment to complete (5-10 minutes)
-   - Your app will be available at `https://your-app-name.onrender.com`
-
-#### Method 2: Deploy Node.js Version
-
-1. **Modify package.json** (create if needed):
-   ```json
-   {
-     "name": "image-prompt-extractor",
-     "version": "1.0.0",
-     "main": "server.js",
-     "scripts": {
-       "start": "node server.js"
-     },
-     "engines": {
-       "node": "18.x"
-     }
-   }
-   ```
-
-2. **Configure Render**
-   - **Environment**: `Node`
-   - **Build Command**: `npm install`
-   - **Start Command**: `npm start`
-
-3. **Environment Variables**: Same as Python version
-
-#### Method 3: Using render.yaml (Infrastructure as Code)
-
-Create `render.yaml` in your repository root:
-```yaml
-services:
-  - type: web
-    name: image-prompt-extractor
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn --bind 0.0.0.0:$PORT main:app
-    envVars:
-      - key: GEMINI_API_KEY
-        sync: false
-      - key: SESSION_SECRET
-        generateValue: true
-    plan: free
-```
-
-Then deploy by connecting your repository to Render.
-
-### Deploy to Other Platforms
-
-#### Heroku
-1. Create `Procfile`: `web: gunicorn --bind 0.0.0.0:$PORT main:app`
-2. Set `GEMINI_API_KEY` environment variable
-3. Deploy via Git or GitHub integration
-
-#### Railway
-1. Connect GitHub repository
-2. Set environment variables in dashboard
-3. Railway auto-detects Python/Node.js
-
-#### Vercel (Node.js only)
-1. Install Vercel CLI: `npm i -g vercel`
-2. Run `vercel` in project directory
-3. Set environment variables in dashboard
-
-#### Google Cloud Run
-1. Create `Dockerfile`:
-   ```dockerfile
-   FROM python:3.11-slim
-   WORKDIR /app
-   COPY requirements.txt .
-   RUN pip install -r requirements.txt
-   COPY . .
-   CMD gunicorn --bind 0.0.0.0:$PORT main:app
-   ```
-2. Deploy with: `gcloud run deploy`
-
-### Environment Variables for Production
-
-Required for all deployments:
-- `GEMINI_API_KEY`: Your Google Gemini API key (get from [Google AI Studio](https://aistudio.google.com/app/apikey))
-- `PORT`: Automatically set by most platforms
-- `SESSION_SECRET`: Random string for Flask sessions (auto-generated on most platforms)
-
-### Supported Image Formats
-
-- **Raster**: PNG, JPG, JPEG, GIF, WebP, BMP, TIFF, HEIC, HEIF, AVIF
-- **Vector**: SVG
-- **Icons**: ICO
-- **Maximum Size**: 32MB
-
-## 🌐 Domain Compatibility
-
-Enhanced compatibility with all major image hosting services:
-- imgur.com
-- ibb.co
-- postimg.cc
-- flickr.com
-- Google Drive/Photos
-- Dropbox
-- AWS S3
-- And many more...
-
-## 📊 Response Quality
-
-The system provides extremely detailed analysis covering:
-
-- **Physical Subjects**: Age, gender, build, posture, expressions, clothing
-- **Environment**: Location, architecture, objects, spatial relationships
-- **Visual Style**: Art style, technique, rendering quality
-- **Lighting**: Source locations, shadows, highlights, atmosphere
-- **Colors**: Specific color names, saturation, temperature
-- **Composition**: Framing, perspective, depth, focal points
-- **Materials**: Textures, surfaces, transparency, reflectivity
-- **Fine Details**: Text, symbols, patterns, decorative elements
-
-## 🛠️ Error Handling
-
-- **413**: File too large (>32MB)
-- **400**: Invalid input (missing URL/file, unsupported format)
-- **500**: Internal server error (API issues, processing errors)
-
-## 🔒 Security
-
-- Secure file handling with temporary storage cleanup
-- Input validation and sanitization
-- Rate limiting ready (configure as needed)
-- HTTPS support via proxy middleware
-
-## 📈 Performance
-
-- Average processing time: 2-4 seconds
-- Optimized image preprocessing
-- Memory-efficient handling
-- Automatic image resizing for large files
-
-## 🧪 Testing
-
-### Test with Example Image
-```bash
-curl -X POST https://your-deployment-url.com/api/analyze \
-  -H "Content-Type: application/json" \
-  -d '{"image_url": "https://i.ibb.co/MkVH92j3/image.jpg"}'
-```
-
-### Test Deployment Script
-Use the included test script to verify your deployment:
-```bash
-python test-deployment.py https://your-app.onrender.com
-```
-
-### Health Check
-Monitor your deployment with the health endpoint:
-```bash
-curl https://your-app.onrender.com/health
-```
-
-Expected response:
-```json
-{
-  "status": "healthy",
-  "service": "Image Prompt Extractor",
-  "version": "1.0.0",
-  "gemini_configured": true,
-  "uptime": 1234.56,
-  "checks": {
-    "api_key": true,
-    "disk_space": true,
-    "memory": true
-  }
-}
-```
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-1. **"Gemini API not configured"**
-   - Check that `GEMINI_API_KEY` environment variable is set
-   - Verify the API key is valid at [Google AI Studio](https://aistudio.google.com/app/apikey)
-
-2. **"Failed to download image"**
-   - Ensure the image URL is publicly accessible
-   - Check that the image format is supported
-   - Verify the image size is under 32MB
-
-3. **"Rate limit exceeded"**
-   - The service has built-in rate limiting (15 requests/minute)
-   - Wait a minute before retrying
-
-4. **Deployment fails**
-   - Check that all required environment variables are set
-   - Verify the build and start commands are correct
-   - Review deployment logs for specific errors
-
-### Performance Optimization
-
-- Images are automatically resized to 2048x2048 for optimal processing
-- Rate limiting prevents quota exhaustion
-- Memory usage is optimized for large images
-- Temporary files are automatically cleaned up
-
-## 📊 Monitoring
-
-### Key Metrics to Monitor
-- Response time (should be 2-4 seconds)
-- Error rate (should be < 5%)
-- Memory usage (should stay under 500MB)
-- API key quota usage
-
-### Logging
-Both Python and Node.js versions include comprehensive logging:
-- Request/response logging
-- Error tracking
-- Performance metrics
-- API usage statistics
-
-## 📄 License
-
-MIT License - This project is ready for production use with proper API key configuration.
-
-## 🤝 Support
-
-### Getting Help
-1. Check the health endpoint: `/health`
-2. Review the troubleshooting section above
-3. Verify your Gemini API key configuration
-4. Check deployment platform logs
-
-### Contributing
-Contributions are welcome! Please ensure:
-- API compatibility is maintained
-- Both Python and Node.js versions are updated
-- Tests pass successfully
-- Documentation is updated
+- **Request Rate**: Follow Google Gemini API limits
+- **Daily Quota**: Monitor usage to avoid quota exhaustion
+- **Image Size**: 32MB maximum per request
+- **Concurrent Requests**: Limit concurrent connections for stability

@@ -96,7 +96,7 @@ Colors and textures: palette, materials, surface qualities.
 
 Mood and atmosphere: emotional tone, thematic elements.
 
-Be extremely precise about all body positioning - specify complete body poses like "woman seated center-left, legs spread apart, torso leaning forward, arms positioned at sides, head tilted back, man positioned behind her on the right side, arms wrapped around her waist, legs positioned on either side, hands placement on body" etc. Include every visible element in the image and their exact locations.
+Be extremely precise about body positioning using exact directional terms - specify complete poses like "woman seated center-frame, legs spread wide apart at 45-degree angle, torso leaning slightly forward, left arm resting on left thigh, right arm hanging beside body, head tilted 15 degrees downward, man kneeling behind woman positioned at her right shoulder, left arm wrapped around her waist from behind, right hand placed on her right breast, legs straddling her sides" etc. Use precise angles, directions (left/right/center/behind/front), and exact body part placement.
 
 Analyze everything visible in the image - all body parts, clothing details, background objects, lighting sources, textures, surfaces. Provide comprehensive description targeting 700-900 characters, comma-separated phrases only, capturing all visual elements."""
             
@@ -113,9 +113,9 @@ Analyze everything visible in the image - all body parts, clothing details, back
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.1,
-                    "topK": 20,
-                    "topP": 0.7,
+                    "temperature": 0.05,
+                    "topK": 10,
+                    "topP": 0.5,
                     "maxOutputTokens": 750
                 }
             }
