@@ -70,7 +70,7 @@ class OptimizedImageAnalyzer:
             if not self.api_key:
                 raise RuntimeError("API key not configured")
             
-            api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
+            api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={self.api_key}"
             
             # Optimized prompt focusing on accurate object positioning
             prompt = """Describe this image exactly as it appears, focusing on precise positioning.
@@ -99,7 +99,7 @@ CRITICAL: Describe actual positioning visible. Do not modify or assume positions
                     "temperature": 0.1,
                     "topK": 10,
                     "topP": 0.5,
-                    "maxOutputTokens": 300
+                    "maxOutputTokens": 600
                 }
             }
             
