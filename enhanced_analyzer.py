@@ -103,12 +103,13 @@ BODY LANGUAGE (Critical - observe actual expression):
 PHYSICAL DETAILS:
 - Hair color and style exactly as visible
 - Eye state: open, closed, looking direction, expression
-- Clothing items and colors specifically visible
+- Clothing details: specific garment types (shirt, dress, pants, jacket, etc.), clothing colors, patterns on clothing (stripes, dots, solid), fabric textures (cotton, silk, denim, leather), clothing fit (loose, tight, fitted), sleeve lengths, necklines, visible brand logos or text on clothing, layered clothing items, clothing condition (new, worn, damaged)
 - Skin tone as actually appears
 - Body parts positioning: describe each visible limb's exact position and orientation as they actually appear in the image
 - Visible body proportions and spatial relationships only for what is clearly shown
 - Object positioning: describe visible body objects (arms, legs, torso, head) only as they actually appear, no assumptions
-- Any accessories or objects being held/worn
+- Accessories: jewelry (rings, necklaces, earrings, watches), glasses, hats, bags, belts, shoes (type, color, style)
+- Objects being held/worn: phones, books, tools, instruments, etc.
 
 BACKGROUND DETAILS (Critical - be comprehensive and accurate):
 - Specific background objects: furniture (chairs, tables, beds, shelves), walls, windows, doors, decorative items, plants, artwork
@@ -126,7 +127,25 @@ SETTING & STYLE:
 - Overall composition and framing
 - Artistic medium and technique
 
-Format as comma-separated phrases. Be factual about what you actually see. Do not assume or add details not clearly visible."""
+16-POINT ANALYSIS CRITERIA (only include if clearly present in image):
+1. Color Schemes: dominant colors, contrasts, harmonies, emotional impact (only if notable)
+2. Objects: primary subjects, defining features, contextual elements (only if clearly visible)
+3. Textures: surface qualities, patterns, materials, visual effects (only if observable)
+4. Emotions: emotional tone, expressions, gestures that convey emotion (only if evident)
+5. Composition: balance, symmetry, rule of thirds, perspective (only if notable)
+6. Lighting: light sources, intensity, shadows, warm/cool lighting (only if clear)
+7. Context: setting, time indicators, weather, cultural elements (only if evident)
+8. Action: movement, interactions, activities (only if happening)
+9. Style: artistic style, techniques, medium (only if identifiable)
+10. Narrative: story elements, themes, implied scenarios (only if present)
+11. Symbolism: symbolic objects, gestures, cultural meanings (only if apparent)
+12. Spatial Depth: distance creation, layering, dimensional qualities (only if notable)
+13. Focal Points: attention direction, visual hierarchy (only if clear)
+14. Line & Shape: line types, shapes, structural elements (only if significant)
+15. Typography: text styles, fonts, lettering (only if visible)
+16. Sensory Cues: implied sounds, tactile qualities, atmosphere (only if suggested)
+
+Format as comma-separated phrases. Be factual about what you actually see. Do not assume or add details not clearly visible. Include criteria points only if they are clearly present and observable in the image."""
             
             payload = {
                 "contents": [{
