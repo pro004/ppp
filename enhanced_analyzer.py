@@ -77,52 +77,35 @@ class EnhancedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Enhanced prompt for exact object detection with 16-criteria
-            enhanced_prompt = """Look at this image carefully and describe EXACTLY what you observe. Be factual and specific.
+            # Enhanced prompt focusing on accurate object positioning
+            enhanced_prompt = """Describe this image exactly as it appears, focusing on precise object positioning.
 
-MANDATORY SECTIONS:
+IMAGE QUALITY: resolution, clarity, lighting, focus quality
 
-IMAGE QUALITY: resolution quality, lighting brightness, focus sharpness, any grain or noise
+OBJECT POSITIONING - Describe exactly what you see:
+- What objects/people are present and WHERE they are positioned
+- EXACT body posture: sitting on what, standing how, lying where
+- Precise arm positions: left arm doing what, right arm doing what
+- Hand placement: each hand separately, what they're touching/holding
+- Leg positioning: both legs, exact stance, foot placement
+- Head orientation: facing which direction, tilted how
 
-EXACT OBJECTS PRESENT:
-- Count and identify each person/animal/object you see
-- Describe their precise positioning and what they're doing
-- Specify exact clothing items, colors, and accessories visible
-- Detail facial features, hair, skin tone, expressions as shown
-- List any objects being held, touched, or interacted with
+APPEARANCE DETAILS:
+- Hair color/style, eye state, skin tone, facial expression
+- Exact clothing items, colors, patterns, accessories
+- Objects being held, worn, or interacted with
 
-PRECISE POSITIONING:
-- Primary posture (sitting/standing/lying - specify exactly how)
-- Head direction and tilt, eye gaze direction
-- Arm positions, hand placement, finger positions
-- Leg positioning, foot placement, weight distribution
-- Spatial relationships between objects/people
+BACKGROUND ELEMENTS:
+- Specific objects, furniture, architectural details
+- Colors, lighting, spatial relationships
 
-BACKGROUND DETAILS:
-- Exact colors visible, specific objects present
-- Architectural elements, furniture, decorations
-- Lighting sources, shadows, reflections
-- Text, signs, or writing visible
+16-POINT CRITERIA (only if clearly present):
+1. Color Schemes 2. Objects 3. Textures 4. Emotions 5. Composition 
+6. Lighting 7. Context 8. Action 9. Style 10. Narrative 
+11. Symbolism 12. Spatial Depth 13. Focal Points 14. Line & Shape 
+15. Typography 16. Sensory Cues
 
-16-POINT ANALYSIS (only include if clearly visible):
-1. Color Schemes: dominant colors, color harmony, contrasts
-2. Objects: primary subjects, secondary objects, their characteristics
-3. Textures: fabric, material, surface qualities you can see
-4. Emotions: facial expressions, body language, mood conveyed
-5. Composition: balance, rule of thirds, visual structure
-6. Lighting: light direction, intensity, shadows, highlights
-7. Context: time of day, location type, setting details
-8. Action: movements, activities, interactions happening
-9. Style: photographic/artistic style, technique used
-10. Narrative: story being told, relationship between elements
-11. Symbolism: symbolic objects, meaningful arrangements
-12. Spatial Depth: foreground/background layers, perspective
-13. Focal Points: what draws attention, visual hierarchy
-14. Line & Shape: strong lines, geometric shapes, patterns
-15. Typography: fonts, text style, lettering visible
-16. Sensory Cues: atmosphere, implied sounds, tactile qualities
-
-CRITICAL: Describe only what you actually see. Do not add, assume, or modify anything."""
+CRITICAL: Describe the actual positioning visible in the image. Do not modify or assume positions not shown."""
             
             payload = {
                 "contents": [{
