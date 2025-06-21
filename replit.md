@@ -98,7 +98,7 @@ The Image Prompt Extractor is a web service that analyzes images and generates c
 - June 19, 2025: Enhanced with forensic precision - exact positioning, angles, spatial relationships with precise directional terms (3 sentences, observable facts only)
 - June 21, 2025: Enhanced analyzer with detailed visual elements including hair color, eye states, skin tone, hand placement, artistic details, and background accuracy for precise image reproduction
 - June 21, 2025: Fixed body positioning and body language accuracy with precise posture detection
-- June 21, 2025: Enhanced body positioning with detailed anatomical observations including torso orientation, spine alignment, shoulder positioning, arm configuration, and foot direction
+- June 21, 2025: Corrected body positioning to only describe visible body parts, preventing assumptions about hidden or cropped areas
 - June 21, 2025: Added comprehensive background details detection including furniture, architectural elements, spatial relationships, and environmental setting
 
 ## User Preferences
