@@ -80,15 +80,16 @@ class EnhancedImageAnalyzer:
             # Enhanced prompt focusing on accurate body positioning and language
             enhanced_prompt = """Create a detailed comma-separated description of this image. Be extremely precise about body positioning and body language.
 
-BODY POSITIONING (Critical - be accurate):
-- Exact posture: sitting, standing, lying, leaning, crouching, kneeling
-- Spine alignment: straight, curved, arched, slouched, tilted
-- Shoulder position: level, raised, dropped, rolled forward, back
-- Head orientation: facing forward, turned left/right, tilted, looking up/down
-- Arm placement: at sides, crossed, raised, extended, bent, one up/one down
-- Hand position: open, closed, pointing, gesturing, resting on specific body parts or objects
-- Leg positioning: together, apart, crossed, bent, straight, weight distribution
-- Foot placement: flat, on tiptoes, one foot forward, turned in/out
+BODY POSITIONING (Critical - observe exactly what you see):
+- Primary posture: sitting (specify chair/surface), standing (specify stance width), lying (on back/side/stomach), leaning (against what, direction), crouching, kneeling (one knee/both knees)
+- Torso orientation: facing camera directly, turned 45 degrees left/right, profile view, back view, three-quarter view
+- Spine position: perfectly straight, slight forward lean, backward lean, curved forward, arched back, tilted to left/right
+- Shoulder alignment: level and square, left shoulder higher, right shoulder higher, rolled forward, pulled back, one shoulder dropped
+- Head position: centered over shoulders, tilted left/right (specify degrees if obvious), chin up/down, turned to look left/right/over shoulder
+- Arm configuration: both arms at sides, one arm raised (which arm, how high), arms crossed over chest/waist, arms behind back, one arm extended (direction)
+- Hand placement: resting on specific objects, touching face/hair/clothing, making gestures, holding objects, one hand on hip/pocket
+- Leg stance: feet parallel and together, wide stance, one foot forward, legs crossed while standing/sitting, weight on one leg
+- Foot direction: both feet pointing forward, feet turned out, one foot angled, on balls of feet, flat-footed
 
 BODY LANGUAGE (Critical - observe actual expression):
 - Overall energy: relaxed, tense, confident, nervous, alert, tired
