@@ -84,9 +84,9 @@ class ComprehensiveImageAnalyzer:
 
 Image type and artistic style, medium used.
 
-Characters/subjects: age, gender, facial features, hairstyle, clothing details, exact positioning (where each person/object is located - left/right/center, foreground/background, sitting/standing/lying, body orientation, limb positions), poses, expressions, interactions between subjects.
+Characters/subjects: age, gender, facial features, hairstyle, clothing details, exact positioning (where each person/object is located - left/right/center, foreground/background, sitting/standing/lying, body orientation, complete limb positions - arms, legs, hands, feet placement), full body poses, torso positioning, head tilt, expressions, physical interactions between subjects, body contact points.
 
-Background environment: specific location type (indoor/outdoor, room type, furniture, objects), detailed background elements, spatial depth, what's visible behind subjects, environmental context, setting atmosphere.
+Background environment: specific location type (indoor/outdoor, room type, furniture, objects), all visible background elements, spatial depth, everything visible behind and around subjects, environmental context, setting atmosphere, wall details, floor/surface details, any visible items or decorations.
 
 Composition: framing, angle, perspective, focal points, positioning within frame (top/bottom/center/sides).
 
@@ -96,9 +96,9 @@ Colors and textures: palette, materials, surface qualities.
 
 Mood and atmosphere: emotional tone, thematic elements.
 
-Be extremely precise about spatial relationships - specify exact positions like "woman seated center-left, man positioned behind her on the right side, bed visible in background center, window on far left wall, furniture placement" etc. Include detailed background elements and their specific locations.
+Be extremely precise about all body positioning - specify complete body poses like "woman seated center-left, legs spread apart, torso leaning forward, arms positioned at sides, head tilted back, man positioned behind her on the right side, arms wrapped around her waist, legs positioned on either side, hands placement on body" etc. Include every visible element in the image and their exact locations.
 
-Provide comprehensive description targeting 700-800 characters, comma-separated phrases only, prioritizing positioning and background details."""
+Analyze everything visible in the image - all body parts, clothing details, background objects, lighting sources, textures, surfaces. Provide comprehensive description targeting 700-900 characters, comma-separated phrases only, capturing all visual elements."""
             
             payload = {
                 "contents": [{
@@ -113,10 +113,10 @@ Provide comprehensive description targeting 700-800 characters, comma-separated 
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.12,
-                    "topK": 15,
-                    "topP": 0.65,
-                    "maxOutputTokens": 650
+                    "temperature": 0.1,
+                    "topK": 20,
+                    "topP": 0.7,
+                    "maxOutputTokens": 750
                 }
             }
             
@@ -167,29 +167,30 @@ Provide comprehensive description targeting 700-800 characters, comma-separated 
                 text = text.replace(' ,', ',').replace(',,', ',')
                 text = text.strip().rstrip('.,;:')
                 
-                # Ensure length is around 700-800 characters
-                if len(text) > 820:
+                # Ensure length is around 700-900 characters
+                if len(text) > 920:
                     # Smart truncation while keeping essential elements
                     parts = text.split(', ')
                     essential_parts = []
                     char_count = 0
                     
-                    # Prioritize spatial positioning and background info
+                    # Prioritize spatial positioning, body details, and background info
                     priority_keywords = [
                         'positioned', 'located', 'background', 'foreground', 'center', 'left', 'right',
-                        'behind', 'front', 'sitting', 'standing', 'lying', 'room', 'setting'
+                        'behind', 'front', 'sitting', 'standing', 'lying', 'room', 'setting', 'legs',
+                        'arms', 'hands', 'feet', 'torso', 'head', 'body', 'spread', 'wrapped', 'placement'
                     ]
                     
                     # Add high priority parts first
                     for part in parts:
                         if any(keyword in part.lower() for keyword in priority_keywords):
-                            if char_count + len(part) + 2 <= 800:
+                            if char_count + len(part) + 2 <= 900:
                                 essential_parts.append(part)
                                 char_count += len(part) + 2
                     
                     # Add remaining parts if space allows
                     for part in parts:
-                        if part not in essential_parts and char_count + len(part) + 2 <= 800:
+                        if part not in essential_parts and char_count + len(part) + 2 <= 900:
                             essential_parts.append(part)
                             char_count += len(part) + 2
                     
