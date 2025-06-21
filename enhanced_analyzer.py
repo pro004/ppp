@@ -104,11 +104,21 @@ PHYSICAL DETAILS:
 - Skin tone as actually appears
 - Any accessories or objects being held/worn
 
+BACKGROUND DETAILS (Critical - be comprehensive):
+- Specific background objects: furniture, walls, windows, doors, decorative items
+- Background colors and patterns: solid colors, textures, wallpapers, paint finishes
+- Architectural elements: ceiling details, floor type, moldings, fixtures
+- Environmental setting: indoor/outdoor, room type, natural elements, weather
+- Background depth: what's visible behind main subject at different distances
+- Background lighting: shadows, reflections, light sources, brightness variations
+- Background text or signage: any visible words, symbols, or graphics
+- Background spatial relationship: what's to the left, right, above, below main subject
+
 SETTING & STYLE:
-- Background elements clearly visible
 - Lighting quality and direction
 - Color palette and artistic style
 - Overall composition and framing
+- Artistic medium and technique
 
 Format as comma-separated phrases. Be factual about what you actually see. Do not assume or add details not clearly visible."""
             

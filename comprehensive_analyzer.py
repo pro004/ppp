@@ -86,7 +86,7 @@ EXACT POSITIONING: Describe the precise position and pose of each person/object 
 
 DETAILED VISUAL ELEMENTS: Describe clothing details, hair color and style, facial expressions, eye state (open/closed), skin tone, body positioning, hand placement, leg positioning, any visible accessories or markings.
 
-BACKGROUND & SETTING: Describe visible background elements, color tones, lighting quality, any text or symbols, furniture or objects if clearly visible.
+BACKGROUND & SETTING: Describe specific background objects (furniture, walls, windows, doors, decorative items), background colors and patterns, architectural elements (ceiling, floor, moldings), environmental setting (indoor/outdoor, room type), background depth and spatial relationships, background lighting and shadows, any visible text or signage, what's positioned to the left, right, above, and below the main subject.
 
 ARTISTIC DETAILS: Art style, medium, lighting direction, color palette, shading, line quality, composition framing.
 
