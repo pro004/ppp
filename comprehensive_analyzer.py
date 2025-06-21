@@ -79,26 +79,26 @@ class ComprehensiveImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Enhanced detailed prompt for comprehensive analysis
-            comprehensive_prompt = """Examine this image thoroughly and provide a comprehensive comma-separated description covering every visual detail. Include all of these aspects:
+            # Enhanced detailed prompt with spatial positioning and background focus
+            comprehensive_prompt = """Analyze this image in detail and provide a comprehensive comma-separated description. Focus particularly on:
 
-Image classification (human, animal, anime, object, landscape, architecture, abstract art), artistic style (realistic, stylized, cartoonish, digital art, photography, painting), medium and technique used.
+Image type and artistic style, medium used.
 
-For people/characters: precise age estimation, gender, ethnicity if discernible, detailed facial features (eyes, nose, mouth, expression), complete hairstyle and color description, full clothing details including colors and materials, exact body pose and positioning, any accessories or distinguishing marks.
+Characters/subjects: age, gender, facial features, hairstyle, clothing details, exact positioning (where each person/object is located - left/right/center, foreground/background, sitting/standing/lying, body orientation, limb positions), poses, expressions, interactions between subjects.
 
-Composition elements: framing type (close-up, medium, wide shot), camera angle and perspective, focal points, depth of field, symmetry or asymmetry, leading lines, rule of thirds application.
+Background environment: specific location type (indoor/outdoor, room type, furniture, objects), detailed background elements, spatial depth, what's visible behind subjects, environmental context, setting atmosphere.
 
-Lighting analysis: light source direction and type (natural/artificial), lighting quality (soft, harsh, diffused, dramatic), shadow patterns, highlights, overall brightness, time of day indicators.
+Composition: framing, angle, perspective, focal points, positioning within frame (top/bottom/center/sides).
 
-Color and texture: dominant color palette, color temperature (warm/cool), saturation levels, contrast, specific material textures (smooth, rough, glossy, matte, fabric, metal, skin), surface qualities.
+Lighting: source direction, quality, shadows, highlights, color temperature.
 
-Background and environment: detailed setting description, spatial relationships, foreground/middle ground/background elements, environmental context, location type.
+Colors and textures: palette, materials, surface qualities.
 
-Emotional and thematic content: mood conveyed, atmosphere, symbolic elements, cultural references, narrative implications, emotional impact.
+Mood and atmosphere: emotional tone, thematic elements.
 
-Technical aspects: image quality, any visual effects or filters, processing style, artistic techniques, movement or action captured.
+Be extremely precise about spatial relationships - specify exact positions like "woman seated center-left, man positioned behind her on the right side, bed visible in background center, window on far left wall, furniture placement" etc. Include detailed background elements and their specific locations.
 
-Provide this as flowing descriptive phrases separated by commas, ensuring comprehensive coverage of all visible elements."""
+Provide comprehensive description targeting 700-800 characters, comma-separated phrases only, prioritizing positioning and background details."""
             
             payload = {
                 "contents": [{
@@ -113,10 +113,10 @@ Provide this as flowing descriptive phrases separated by commas, ensuring compre
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.15,
+                    "temperature": 0.12,
                     "topK": 15,
-                    "topP": 0.7,
-                    "maxOutputTokens": 800
+                    "topP": 0.65,
+                    "maxOutputTokens": 650
                 }
             }
             
@@ -167,7 +167,35 @@ Provide this as flowing descriptive phrases separated by commas, ensuring compre
                 text = text.replace(' ,', ',').replace(',,', ',')
                 text = text.strip().rstrip('.,;:')
                 
-                logger.info(f"Generated comma-separated prompt: {len(text)} characters")
+                # Ensure length is around 700-800 characters
+                if len(text) > 820:
+                    # Smart truncation while keeping essential elements
+                    parts = text.split(', ')
+                    essential_parts = []
+                    char_count = 0
+                    
+                    # Prioritize spatial positioning and background info
+                    priority_keywords = [
+                        'positioned', 'located', 'background', 'foreground', 'center', 'left', 'right',
+                        'behind', 'front', 'sitting', 'standing', 'lying', 'room', 'setting'
+                    ]
+                    
+                    # Add high priority parts first
+                    for part in parts:
+                        if any(keyword in part.lower() for keyword in priority_keywords):
+                            if char_count + len(part) + 2 <= 800:
+                                essential_parts.append(part)
+                                char_count += len(part) + 2
+                    
+                    # Add remaining parts if space allows
+                    for part in parts:
+                        if part not in essential_parts and char_count + len(part) + 2 <= 800:
+                            essential_parts.append(part)
+                            char_count += len(part) + 2
+                    
+                    text = ', '.join(essential_parts)
+                
+                logger.info(f"Generated spatial-focused prompt: {len(text)} characters")
                 return {"success": True, "prompt": text, "analysis_type": "comprehensive"}
                 
             else:
