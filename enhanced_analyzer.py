@@ -93,59 +93,23 @@ BODY POSITIONING (Critical - be accurate, only describe visible parts):
 - Foot placement: flat, on tiptoes, one foot forward, turned in/out (only if feet are visible)
 - IMPORTANT: Do not describe body parts that are cropped out, hidden, or not clearly shown - describe exactly what you see without changing anything
 
-BODY LANGUAGE (Critical - observe actual expression):
-- Overall energy: relaxed, tense, confident, nervous, alert, tired
-- Openness: open posture vs closed/defensive posture
-- Engagement: actively engaged, withdrawn, distracted, focused
-- Confidence level: confident stance vs uncertain body language
-- Emotional state visible through posture: happy, sad, angry, surprised, neutral
+BODY LANGUAGE (only if clearly visible):
+- Overall energy and emotional state visible through posture
 
 PHYSICAL DETAILS:
 - Hair color and style exactly as visible
 - Eye state: open, closed, looking direction, expression
-- Clothing details: specific garment types (shirt, dress, pants, jacket, etc.), clothing colors, patterns on clothing (stripes, dots, solid), fabric textures (cotton, silk, denim, leather), clothing fit (loose, tight, fitted), sleeve lengths, necklines, visible brand logos or text on clothing, layered clothing items, clothing condition (new, worn, damaged)
+- Clothing: garment types, colors, patterns, textures, fit, brand logos, condition
 - Skin tone as actually appears
-- Body parts positioning: describe each visible limb's exact position and orientation as they actually appear in the image
-- Visible body proportions and spatial relationships only for what is clearly shown
-- Object positioning: describe visible body objects (arms, legs, torso, head) only as they actually appear, no assumptions
-- Accessories: jewelry (rings, necklaces, earrings, watches), glasses, hats, bags, belts, shoes (type, color, style)
-- Objects being held/worn: phones, books, tools, instruments, etc.
+- Body positioning: visible limbs and their exact positions as shown
+- Accessories and objects: jewelry, glasses, bags, shoes, held items
 
-BACKGROUND DETAILS (Critical - be comprehensive and accurate):
-- Specific background objects: furniture (chairs, tables, beds, shelves), walls, windows, doors, decorative items, plants, artwork
-- Background colors and patterns: exact color names (pure white, cream, light blue, dark gray, etc.), color intensity (bright, muted, pastel, vibrant), patterns (stripes, dots, floral, geometric), textures (smooth paint, rough texture, fabric, wood grain), wall finishes (painted walls, wallpaper, brick, wood paneling)
-- Architectural elements: ceiling details (height, color, texture), floor type (hardwood, carpet, tile, concrete), moldings, baseboards, crown molding, fixtures (light fixtures, outlets, switches)
-- Environmental setting: indoor/outdoor specification, room type (bedroom, living room, kitchen, office, studio), natural elements (trees, sky, grass), weather conditions if outdoor
-- Background depth: multiple layers - what's immediately behind subject, mid-distance objects, far background elements
-- Background lighting: natural vs artificial light, shadows cast on walls, reflections on surfaces, light sources visible (lamps, windows), brightness variations across background
-- Background text or signage: any visible words, letters, symbols, logos, signs, posters, books
-- Background spatial relationship: detailed description of what's positioned to the left, right, above, and below the main subject, including distance and relative positioning
+BACKGROUND & STYLE:
+- Background objects, colors, textures, lighting
+- Architectural elements, room type, spatial relationships
+- Artistic style, composition, any additional notable elements
 
-SETTING & STYLE:
-- Lighting quality and direction
-- Color palette and artistic style
-- Overall composition and framing
-- Artistic medium and technique
-
-16-POINT ANALYSIS CRITERIA (only include if clearly present in image):
-1. Color Schemes: dominant colors, contrasts, harmonies, emotional impact (only if notable)
-2. Objects: primary subjects, defining features, contextual elements (only if clearly visible)
-3. Textures: surface qualities, patterns, materials, visual effects (only if observable)
-4. Emotions: emotional tone, expressions, gestures that convey emotion (only if evident)
-5. Composition: balance, symmetry, rule of thirds, perspective (only if notable)
-6. Lighting: light sources, intensity, shadows, warm/cool lighting (only if clear)
-7. Context: setting, time indicators, weather, cultural elements (only if evident)
-8. Action: movement, interactions, activities (only if happening)
-9. Style: artistic style, techniques, medium (only if identifiable)
-10. Narrative: story elements, themes, implied scenarios (only if present)
-11. Symbolism: symbolic objects, gestures, cultural meanings (only if apparent)
-12. Spatial Depth: distance creation, layering, dimensional qualities (only if notable)
-13. Focal Points: attention direction, visual hierarchy (only if clear)
-14. Line & Shape: line types, shapes, structural elements (only if significant)
-15. Typography: text styles, fonts, lettering (only if visible)
-16. Sensory Cues: implied sounds, tactile qualities, atmosphere (only if suggested)
-
-Format as comma-separated phrases. Be factual about what you actually see. Do not assume or add details not clearly visible. Include criteria points only if they are clearly present and observable in the image."""
+Format as comma-separated phrases. Describe only what is clearly visible."""
             
             payload = {
                 "contents": [{
