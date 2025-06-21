@@ -71,8 +71,18 @@ class OptimizedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Natural image description as tags
-            prompt = """Describe exactly what you see in this image using comma-separated anime/manga style tags. Just list what's actually there - people, clothing, colors, poses, setting, objects. Don't add anything that's not clearly visible. Keep it under 700 characters."""
+            # Universal image analysis prompt
+            prompt = """Analyze this image comprehensively and generate a detailed description covering:
+
+1. Image Type & Style: Specify if human/anime/object/landscape/abstract, art style (realistic/stylized/cartoonish)
+2. Subject Details: For humans/anime - age, gender, hair (color/length/style), clothing (type/colors), facial features, pose, expression, body position
+3. Spatial Positioning: Exact placement (left/right/center, foreground/background), relative positions between subjects/objects
+4. Composition: Camera angle, framing, lighting conditions, depth of field
+5. Environment: Setting, background elements, time of day, atmosphere
+6. Colors & Materials: Dominant colors, textures, materials visible
+7. Emotions & Interactions: Expressions, body language, subject interactions
+
+Generate as comma-separated tags with precise positional details. Be accurate about what's actually visible."""
             
             payload = {
                 "contents": [{
@@ -87,10 +97,10 @@ class OptimizedImageAnalyzer:
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.2,
-                    "topK": 20,
-                    "topP": 0.8,
-                    "maxOutputTokens": 200
+                    "temperature": 0.1,
+                    "topK": 15,
+                    "topP": 0.6,
+                    "maxOutputTokens": 350
                 }
             }
             
@@ -103,15 +113,20 @@ class OptimizedImageAnalyzer:
             if 'candidates' in result and result['candidates']:
                 text = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
-                # Simple cleaning for natural descriptions
+                # Clean comprehensive analysis format
                 prefixes = [
-                    "Describe exactly what you see in this image using comma-separated anime/manga style tags.",
-                    "Just list what's actually there",
-                    "Don't add anything that's not clearly visible.",
-                    "Keep it under 700 characters.",
-                    "Here's what I see:",
-                    "I can see:",
-                    "The image shows:",
+                    "Analyze this image comprehensively and generate a detailed description covering:",
+                    "1. Image Type & Style:",
+                    "2. Subject Details:",
+                    "3. Spatial Positioning:",
+                    "4. Composition:",
+                    "5. Environment:",
+                    "6. Colors & Materials:",
+                    "7. Emotions & Interactions:",
+                    "Generate as comma-separated tags with precise positional details.",
+                    "Be accurate about what's actually visible.",
+                    "Here's the comprehensive analysis:",
+                    "Analysis:",
                     "Tags:",
                 ]
                 
@@ -119,6 +134,31 @@ class OptimizedImageAnalyzer:
                     if text.lower().startswith(prefix.lower()):
                         text = text[len(prefix):].strip()
                         break
+                
+                # Remove numbered list format and extract actual content
+                lines = text.split('\n')
+                content_lines = []
+                
+                for line in lines:
+                    line = line.strip()
+                    # Skip numbered categories and instruction lines
+                    if any(skip in line.lower() for skip in [
+                        '1.', '2.', '3.', '4.', '5.', '6.', '7.',
+                        'image type', 'subject details', 'spatial positioning',
+                        'composition', 'environment', 'colors & materials', 'emotions'
+                    ]):
+                        continue
+                    
+                    # Keep actual descriptive content
+                    if line and (',' in line or len(line.split()) > 3):
+                        content_lines.append(line)
+                
+                if content_lines:
+                    text = ' '.join(content_lines)
+                
+                # Convert structured format to tags
+                text = text.replace(':', ',').replace(';', ',')
+                text = text.replace(' - ', ', ').replace(' / ', ', ')
                 
                 # Clean and format
                 text = text.replace('**', '').replace('*', '').replace('##', '')
