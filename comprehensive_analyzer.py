@@ -84,9 +84,9 @@ class ComprehensiveImageAnalyzer:
 
 EXACT POSITIONING: Describe the precise position and pose of each person/object as actually seen in the image. Use specific directional terms (left, right, center, behind, in front) and exact body positioning with limb placement. IMPORTANT: Only describe body parts that are clearly visible - do not assume or describe hidden, cropped, or unclear body parts.
 
-DETAILED VISUAL ELEMENTS: Describe clothing details, hair color and style, facial expressions, eye state (open/closed), skin tone, body positioning, hand placement, leg positioning, any visible accessories or markings.
+DETAILED VISUAL ELEMENTS: Describe clothing details, hair color and style, facial expressions, eye state (open/closed), skin tone, exact hand placement and finger positions, specific body parts positioning and spatial relationships, leg positioning, any visible accessories or markings.
 
-BACKGROUND & SETTING: Describe specific background objects (furniture, walls, windows, doors, decorative items), background colors and patterns, architectural elements (ceiling, floor, moldings), environmental setting (indoor/outdoor, room type), background depth and spatial relationships, background lighting and shadows, any visible text or signage, what's positioned to the left, right, above, and below the main subject.
+BACKGROUND & SETTING: Describe specific background objects (furniture, walls, windows, doors, decorative items), exact background color names and intensity (light blue, dark gray, bright white, etc.), patterns and textures, architectural elements (ceiling, floor, moldings), environmental setting (indoor/outdoor, room type), background depth and spatial relationships, background lighting and shadows, any visible text or signage, what's positioned to the left, right, above, and below the main subject.
 
 ARTISTIC DETAILS: Art style, medium, lighting direction, color palette, shading, line quality, composition framing.
 

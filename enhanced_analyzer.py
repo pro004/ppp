@@ -86,7 +86,7 @@ BODY POSITIONING (Critical - be accurate, only describe visible parts):
 - Shoulder position: level, raised, dropped, rolled forward, back (only if visible)
 - Head orientation: facing forward, turned left/right, tilted, looking up/down (only if visible)
 - Arm placement: at sides, crossed, raised, extended, bent, one up/one down (only if arms are visible)
-- Hand position: open, closed, pointing, gesturing, resting on specific body parts or objects (only if hands are visible)
+- Hand position: describe exact hand placement - open palms, closed fists, pointing direction, touching specific objects or body parts, hand gestures, finger positions, what each hand is doing separately (only if hands are clearly visible)
 - Leg positioning: together, apart, crossed, bent, straight, weight distribution (only if legs are visible)
 - Foot placement: flat, on tiptoes, one foot forward, turned in/out (only if feet are visible)
 - IMPORTANT: Do not describe body parts that are cropped out, hidden, or not clearly shown
@@ -103,11 +103,13 @@ PHYSICAL DETAILS:
 - Eye state: open, closed, looking direction, expression
 - Clothing items and colors specifically visible
 - Skin tone as actually appears
+- Body parts positioning: describe each visible limb's exact position and orientation
+- Visible body proportions and how body parts relate to each other spatially
 - Any accessories or objects being held/worn
 
 BACKGROUND DETAILS (Critical - be comprehensive):
 - Specific background objects: furniture, walls, windows, doors, decorative items
-- Background colors and patterns: solid colors, textures, wallpapers, paint finishes
+- Background colors and patterns: exact color names (white, beige, blue, etc.), color intensity (light, dark, bright, muted), patterns (stripes, dots, floral), textures (smooth, rough, fabric), wall finishes (painted, wallpaper, wood)
 - Architectural elements: ceiling details, floor type, moldings, fixtures
 - Environmental setting: indoor/outdoor, room type, natural elements, weather
 - Background depth: what's visible behind main subject at different distances
