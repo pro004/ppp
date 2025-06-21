@@ -77,54 +77,40 @@ class EnhancedImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Enhanced comprehensive prompt preserving real positioning and details
-            enhanced_prompt = """Analyze this image using the following detailed criteria and provide EXACTLY what you see:
+            # Enhanced prompt focusing on accurate body positioning and language
+            enhanced_prompt = """Create a detailed comma-separated description of this image. Be extremely precise about body positioning and body language.
 
-1. Color Schemes: What are the dominant colors? Are there contrasts, harmonies, or complementary colors? How do the colors influence the mood, focus, or emotion?
+BODY POSITIONING (Critical - be accurate):
+- Exact posture: sitting, standing, lying, leaning, crouching, kneeling
+- Spine alignment: straight, curved, arched, slouched, tilted
+- Shoulder position: level, raised, dropped, rolled forward, back
+- Head orientation: facing forward, turned left/right, tilted, looking up/down
+- Arm placement: at sides, crossed, raised, extended, bent, one up/one down
+- Hand position: open, closed, pointing, gesturing, resting on specific body parts or objects
+- Leg positioning: together, apart, crossed, bent, straight, weight distribution
+- Foot placement: flat, on tiptoes, one foot forward, turned in/out
 
-2. Objects: What are the primary subjects or objects? What are their defining features or roles? Are there background or secondary elements that add context, symbolism, or depth?
+BODY LANGUAGE (Critical - observe actual expression):
+- Overall energy: relaxed, tense, confident, nervous, alert, tired
+- Openness: open posture vs closed/defensive posture
+- Engagement: actively engaged, withdrawn, distracted, focused
+- Confidence level: confident stance vs uncertain body language
+- Emotional state visible through posture: happy, sad, angry, surprised, neutral
 
-3. Textures: What textures or surface qualities can you observe? Are there patterns, materials, or visual effects that enhance the tactile or visual experience?
+PHYSICAL DETAILS:
+- Hair color and style exactly as visible
+- Eye state: open, closed, looking direction, expression
+- Clothing items and colors specifically visible
+- Skin tone as actually appears
+- Any accessories or objects being held/worn
 
-4. Emotions: What is the emotional tone or atmosphere? Are there human or animal expressions, postures, or gestures that convey emotion? How does the emotional content align with the composition or lighting?
+SETTING & STYLE:
+- Background elements clearly visible
+- Lighting quality and direction
+- Color palette and artistic style
+- Overall composition and framing
 
-5. Composition: Is the image balanced, asymmetrical, or centered? Does it follow the rule of thirds, symmetry, or other compositional principles? What perspective or angle is used and how does it influence viewer perception?
-
-6. Lighting: What is the light source? Is the lighting soft or harsh, warm or cool? How does it interact with the subjects and shadows?
-
-7. Context: What is the setting? What time of day, season, or weather conditions are shown? Are there cultural, historical, or geographical clues?
-
-8. Action: Is there any movement or implied motion? What are the subjects doing or interacting with? How do actions contribute to the story or message?
-
-9. Style: What artistic style is used? Are there notable techniques? How does the style affect interpretation?
-
-10. Narrative: What story or scenario is being told or implied? What themes, metaphors, or symbols are present?
-
-11. Symbolism: Are there symbolic objects, gestures, or arrangements? What abstract ideas or cultural meanings might they represent?
-
-12. Spatial Depth: How is a sense of space or distance created? Does the image feel flat or deep?
-
-13. Focal Point: Where does the viewer's eye go first? How is attention drawn? Is the focal point clearly defined?
-
-14. Line and Shape: What types of lines and shapes are used? How do they guide movement, emotion, or structure?
-
-15. Typography: If text is present, what fonts or lettering styles are used? How does the typography relate to the visual tone?
-
-16. Sound and Sensory Cues: Are there any sounds or sensory cues? How do they support the visual elements?
-
-CRITICAL REQUIREMENTS:
-- Describe EXACT positioning of people/objects (left, right, center, behind, in front, seated, standing, etc.)
-- Include DETAILED body positioning: posture, stance, orientation, lean, tilt, body angle, shoulder position, spine alignment
-- Describe comprehensive body expressions and language: confident, relaxed, tense, open, closed, dominant, submissive, defensive, inviting, assertive, withdrawn, energetic, tired, alert, distracted
-- Detail facial expressions: eyes (open/closed/squinting/wide/narrow), mouth (smiling/frowning/neutral/parted/pursed), eyebrows (raised/lowered/furrowed), cheeks (flushed/pale), jaw (clenched/relaxed)
-- Include detailed hand and arm positions: crossed, open, gesturing, pointing, resting, holding, fidgeting, clenched, relaxed, reaching, defensive, welcoming
-- Describe precise leg positioning: crossed, straight, bent, wide stance, close together, shifted weight, balanced, unbalanced
-- Add micro-expressions and subtle body cues: head tilt, shoulder tension, breathing patterns, muscle tension, overall energy level
-- Include ALL visible clothing details, hair style and color, accessories
-- Preserve ALL background elements, colors, lighting, and setting details
-- Keep ALL descriptive information - DO NOT remove or truncate important visual details
-- Use precise, factual descriptions of what is actually visible
-- Format as detailed comma-separated phrases capturing the complete visual analysis"""
+Format as comma-separated phrases. Be factual about what you actually see. Do not assume or add details not clearly visible."""
             
             payload = {
                 "contents": [{
