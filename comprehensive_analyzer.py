@@ -77,7 +77,7 @@ class ComprehensiveImageAnalyzer:
             if not self.api_key:
                 raise RuntimeError("API key not configured")
             
-            api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
+            api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={self.api_key}"
             
             # Comprehensive prompt focusing on accurate object positioning
             comprehensive_prompt = """Describe this image exactly as it appears, focusing on precise object positioning.
@@ -100,12 +100,11 @@ APPEARANCE DETAILS:
 BACKGROUND ELEMENTS:
 - Specific objects, furniture, architectural details
 - Colors, lighting, spatial relationships
-
-16-POINT CRITERIA (only if clearly present):
-1. Color Schemes 2. Objects 3. Textures 4. Emotions 5. Composition 
-6. Lighting 7. Context 8. Action 9. Style 10. Narrative 
-11. Symbolism 12. Spatial Depth 13. Focal Points 14. Line & Shape 
-15. Typography 16. Sensory Cues
+POINT CRITERIAS (only if clearly present):
+ Color Schemes,  Objects, Textures,  Emotions,  Composition 
+, Lighting,  Context,  Action,  Style,  Narrative 
+, Symbolism, Spatial Depth, Focal Points, line & Shape 
+,typography,  Sensory Cues
 
 CRITICAL: Describe the actual positioning visible in the image. Do not modify or assume positions not shown."""
             
@@ -122,7 +121,7 @@ CRITICAL: Describe the actual positioning visible in the image. Do not modify or
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.02,
+                    "temperature": 1.2,
                     "topK": 5,
                     "topP": 0.3,
                     "maxOutputTokens": 650
