@@ -140,8 +140,13 @@ def api_analyze_image():
                 }), 400
             
             logger.info(f"API: Analyzing image from URL: {image_url}")
-            # Use comprehensive analyzer for API requests
-            active_analyzer = comprehensive_analyzer if comprehensive_analyzer.is_configured() else analyzer
+            # Use same analyzer priority as web app
+            if enhanced_analyzer.is_configured():
+                active_analyzer = enhanced_analyzer
+            elif comprehensive_analyzer.is_configured():
+                active_analyzer = comprehensive_analyzer
+            else:
+                active_analyzer = analyzer
             result = active_analyzer.analyze_from_url(image_url)
             
             # Handle response format differences between analyzers
@@ -190,7 +195,7 @@ def api_analyze_image():
             try:
                 uploaded_file.save(file_path)
                 logger.info(f"API: Analyzing uploaded image: {filename}")
-                # Use enhanced analyzer for API requests as primary choice
+                # Use same analyzer priority as web app
                 if enhanced_analyzer.is_configured():
                     active_analyzer = enhanced_analyzer
                 elif comprehensive_analyzer.is_configured():

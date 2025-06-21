@@ -83,7 +83,7 @@ class EnhancedImageAnalyzer:
 CRITICAL RULE: DESCRIBE THE IMAGE AS IT IS - DO NOT CHANGE OR MODIFY ANYTHING
 
 BODY POSITIONING (Critical - be accurate, only describe visible parts):
-- Exact posture: sitting (specify what on - chair, floor, bed, couch), standing (specify stance), lying (on back/side/stomach, specify surface), leaning (against what), crouching, kneeling (only if clearly visible in image)
+- Exact posture: only describe if clearly visible - sitting, standing, lying, leaning, crouching, kneeling (specify surface/object only if visible)
 - Spine alignment: straight, curved, arched, slouched, tilted (only if visible)
 - Shoulder position: level, raised, dropped, rolled forward, back (only if visible)
 - Head orientation: facing forward, turned left/right, tilted, looking up/down (only if visible)
@@ -105,9 +105,9 @@ PHYSICAL DETAILS:
 - Eye state: open, closed, looking direction, expression
 - Clothing items and colors specifically visible
 - Skin tone as actually appears
-- Body parts positioning: describe each visible limb's exact position, orientation, and angle relative to the body and camera
-- Visible body proportions and how body parts relate to each other spatially
-- Focus carefully on actual body object positions - arms, legs, torso, head as they actually appear
+- Body parts positioning: describe each visible limb's exact position and orientation as they actually appear in the image
+- Visible body proportions and spatial relationships only for what is clearly shown
+- Object positioning: describe visible body objects (arms, legs, torso, head) only as they actually appear, no assumptions
 - Any accessories or objects being held/worn
 
 BACKGROUND DETAILS (Critical - be comprehensive and accurate):
