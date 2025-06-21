@@ -275,14 +275,18 @@ CRITICAL REQUIREMENTS:
             parts = [part.strip() for part in text.split(',') if part.strip()]
             text = ', '.join(parts)
             
+            # Smart truncation to keep under 800-900 characters
+            if len(text) > 900:
+                text = self._smart_truncate_detailed(text, 850)
+            
             return text
             
         except Exception as e:
             logger.error(f"Error cleaning analysis response: {str(e)}")
             return raw_text
     
-    def _smart_truncate(self, text, max_length):
-        """Intelligently truncate text while preserving the most important descriptive elements."""
+    def _smart_truncate_detailed(self, text, max_length):
+        """Intelligently truncate while preserving essential positioning and visual details."""
         if len(text) <= max_length:
             return text
         
@@ -290,40 +294,46 @@ CRITICAL REQUIREMENTS:
         essential_parts = []
         char_count = 0
         
-        # Priority keywords for essential visual elements
-        priority_keywords = [
-            # Subject and composition
-            'woman', 'man', 'person', 'character', 'figure', 'subject',
-            'center', 'foreground', 'background', 'positioned', 'seated', 'standing',
-            
-            # Visual style and medium
-            'anime', 'digital', 'illustration', 'painting', 'photograph', 'realistic',
-            'stylized', 'artistic', 'portrait', 'landscape',
-            
-            # Key visual elements
-            'hair', 'eyes', 'face', 'expression', 'clothing', 'outfit',
-            'colors', 'lighting', 'shadows', 'composition', 'perspective',
-            
-            # Emotional and atmospheric
-            'mood', 'atmosphere', 'emotion', 'warm', 'cool', 'soft', 'bright',
-            'dramatic', 'peaceful', 'energetic'
+        # High priority keywords for essential elements
+        high_priority = [
+            'woman', 'man', 'person', 'girl', 'boy', 'character', 'figure',
+            'left', 'right', 'center', 'behind', 'front', 'seated', 'standing', 'positioned',
+            'hair', 'eyes', 'face', 'expression', 'clothing', 'outfit', 'dress', 'shirt',
+            'anime', 'digital', 'realistic', 'illustration', 'portrait'
         ]
         
-        # First pass: Add parts with priority keywords
+        # Medium priority keywords
+        medium_priority = [
+            'background', 'foreground', 'colors', 'lighting', 'shadows', 'composition',
+            'warm', 'cool', 'soft', 'bright', 'dark', 'light', 'mood', 'atmosphere'
+        ]
+        
+        # Add high priority parts first
         for part in parts:
             part = part.strip()
-            if any(keyword in part.lower() for keyword in priority_keywords):
-                if char_count + len(part) + 2 <= max_length:
+            if any(keyword in part.lower() for keyword in high_priority):
+                needed_chars = len(part) + (2 if essential_parts else 0)
+                if char_count + needed_chars <= max_length:
                     essential_parts.append(part)
-                    char_count += len(part) + 2
+                    char_count += needed_chars
         
-        # Second pass: Add remaining parts if space allows
+        # Add medium priority parts if space allows
+        for part in parts:
+            part = part.strip()
+            if part not in essential_parts and any(keyword in part.lower() for keyword in medium_priority):
+                needed_chars = len(part) + 2
+                if char_count + needed_chars <= max_length:
+                    essential_parts.append(part)
+                    char_count += needed_chars
+        
+        # Add any remaining parts if space allows
         for part in parts:
             part = part.strip()
             if part not in essential_parts:
-                if char_count + len(part) + 2 <= max_length:
+                needed_chars = len(part) + 2
+                if char_count + needed_chars <= max_length:
                     essential_parts.append(part)
-                    char_count += len(part) + 2
+                    char_count += needed_chars
                 else:
                     break
         
