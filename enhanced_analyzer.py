@@ -78,18 +78,17 @@ class EnhancedImageAnalyzer:
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
             # Enhanced prompt focusing on accurate body positioning and language
-            enhanced_prompt = """Create a detailed comma-separated description of this image. Be extremely precise about body positioning and body language.
+            enhanced_prompt = """Create a detailed comma-separated description of this image. Describe EXACTLY what you see without changing anything.
 
-BODY POSITIONING (Critical - be accurate, only describe visible parts):
-- Exact posture: sitting, standing, lying, leaning, crouching, kneeling (only if clearly visible)
-- Spine alignment: straight, curved, arched, slouched, tilted (only if visible)
-- Shoulder position: level, raised, dropped, rolled forward, back (only if visible)
-- Head orientation: facing forward, turned left/right, tilted, looking up/down (only if visible)
-- Arm placement: at sides, crossed, raised, extended, bent, one up/one down (only if arms are visible)
-- Hand position: describe exact hand placement - open palms, closed fists, pointing direction, touching specific objects or body parts, hand gestures, finger positions, what each hand is doing separately (only if hands are clearly visible)
-- Leg positioning: together, apart, crossed, bent, straight, weight distribution (only if legs are visible)
-- Foot placement: flat, on tiptoes, one foot forward, turned in/out (only if feet are visible)
-- IMPORTANT: Do not describe body parts that are cropped out, hidden, or not clearly shown
+CRITICAL RULE: DESCRIBE THE IMAGE AS IT IS - DO NOT CHANGE OR MODIFY ANYTHING
+
+BODY POSITIONING (Describe exactly what exists in the image):
+- Look at the image and describe ONLY what body parts are actually visible
+- Do NOT add, remove, or change any body positions from what you see
+- Do NOT assume positions for hidden or cropped body parts
+- State exactly what pose/position is shown in the image
+- If unsure about a body part, do not describe it
+- Mirror exactly what the image shows - no interpretations or modifications
 
 BODY LANGUAGE (Critical - observe actual expression):
 - Overall energy: relaxed, tense, confident, nervous, alert, tired
