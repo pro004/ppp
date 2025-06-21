@@ -79,23 +79,23 @@ class ComprehensiveImageAnalyzer:
             
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.api_key}"
             
-            # Concise tag-based analysis prompt
-            comprehensive_prompt = """Analyze this image and provide ONLY comma-separated tags in this exact format:
+            # Detailed structured analysis prompt
+            comprehensive_prompt = """Analyze and describe the key features of the image provided. Include the following details:
 
-image_type, art_style, subject_count, subject_details, clothing_details, pose_action, background_setting, lighting_type, color_palette, mood_atmosphere
+1. Type of Image: (Is it a human, anime character, object, landscape, artwork, etc.?)
 
-Rules:
-- Use underscores instead of spaces in multi-word tags
-- Be precise and concise
-- Count subjects accurately (1_woman, 2_men, etc.)
-- Describe clothing clearly (nude, topless, shirt, dress, etc.)
-- Include key colors and lighting
-- No explanations, only tags
-- Maximum 50 tags total
+2. Subject Characteristics:
+- If it's a human: Describe their age, gender, ethnicity, facial expression, clothing, and hairstyle.
+- If it's an anime character: Describe their hairstyle, eye color, clothing, expression, and the artistic style (e.g., classic anime, modern, etc.).
+- If it's an object: Identify the object, its shape, color, material, and possible usage.
+- If it's a landscape: Mention the setting (e.g., city, beach, mountains), weather, time of day, and any prominent features (like trees, water, etc.).
+- If it's abstract art: Describe the colors, patterns, shapes, and any noticeable emotions or themes it conveys.
 
-Example format: anime, drawing, 1_woman, 1_man, woman_mostly_nude, man_dark_shirt, embracing, intimate_pose, bedroom_background, soft_lighting, purple_tones, romantic_mood
+3. Style and Artistry: Mention the art style or medium used (e.g., realism, digital art, sketch, painting, photography).
 
-Generate tags for this image now:"""
+4. Additional Details: Any unique or noteworthy features, such as symbolism, themes, or cultural references.
+
+Provide a detailed yet concise description based on the visual elements of the image."""
             
             payload = {
                 "contents": [{
@@ -110,10 +110,10 @@ Generate tags for this image now:"""
                     ]
                 }],
                 "generationConfig": {
-                    "temperature": 0.1,
-                    "topK": 10,
-                    "topP": 0.5,
-                    "maxOutputTokens": 400
+                    "temperature": 0.2,
+                    "topK": 20,
+                    "topP": 0.8,
+                    "maxOutputTokens": 1024
                 }
             }
             
@@ -126,17 +126,16 @@ Generate tags for this image now:"""
             if 'candidates' in result and result['candidates']:
                 text = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
-                # Clean up the tag-based response
-                logger.debug(f"Raw tag response: {text[:200]}...")
+                # Clean up the detailed analysis response
+                logger.debug(f"Raw analysis response: {text[:200]}...")
                 
-                # Remove common prefixes and clean formatting
+                # Remove common prefixes that don't add value
                 prefixes_to_remove = [
-                    "Here are the tags:",
-                    "Tags:",
-                    "Analysis:",
+                    "Here's a detailed analysis of the image:",
                     "Here's the analysis:",
-                    "Generate tags for this image now:",
-                    "The tags are:",
+                    "Analysis of the image:",
+                    "Based on the image provided:",
+                    "Looking at this image:",
                 ]
                 
                 for prefix in prefixes_to_remove:
@@ -144,35 +143,22 @@ Generate tags for this image now:"""
                         text = text[len(prefix):].strip()
                         break
                 
-                # Clean up formatting
-                text = text.replace('**', '').replace('*', '').replace('\n', ' ')
-                text = text.replace('- ', '').replace('• ', '')
+                # Clean up markdown formatting while preserving structure
+                text = text.replace('**', '').replace('*', '')
                 
-                # Ensure it's comma-separated tags
-                if ':' in text:
-                    # Extract only the tag content after colons
-                    parts = text.split(',')
-                    clean_parts = []
-                    for part in parts:
-                        if ':' in part:
-                            clean_parts.append(part.split(':')[-1].strip())
-                        else:
-                            clean_parts.append(part.strip())
-                    text = ', '.join(clean_parts)
+                # Remove any redundant phrases
+                unwanted_phrases = [
+                    'as requested', 'as you can see', 'clearly visible',
+                    'based on the visual elements', 'in this image'
+                ]
                 
-                # Clean spacing and formatting
-                text = ', '.join([tag.strip() for tag in text.split(',') if tag.strip()])
-                
-                # Remove any remaining unwanted phrases
-                unwanted = ['the image shows', 'we can see', 'appears to be', 'seems to be']
-                for phrase in unwanted:
+                for phrase in unwanted_phrases:
                     text = text.replace(phrase, '')
                 
-                # Fix common formatting issues
-                text = text.replace(' ,', ',').replace(',,', ',')
-                text = text.strip().rstrip('.,;:')
+                # Clean up extra spaces
+                text = ' '.join(text.split())
                 
-                logger.info(f"Generated tag-based analysis: {len(text)} characters")
+                logger.info(f"Generated detailed analysis: {len(text)} characters")
                 return {"success": True, "prompt": text, "analysis_type": "comprehensive"}
                 
             else:

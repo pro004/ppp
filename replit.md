@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Image Prompt Extractor is a web service that analyzes images and generates concise, comma-separated tags using Google Gemini Vision AI. The application provides both Python/Flask and Node.js/Express implementations, offering a RESTful API and web interface for tag generation. It supports multiple image formats and input methods (URL or file upload) with comprehensive error handling and rate limiting.
+The Image Prompt Extractor is a web service that analyzes images and generates detailed, structured descriptions using Google Gemini Vision AI. The application provides both Python/Flask and Node.js/Express implementations, offering a RESTful API and web interface for comprehensive image analysis. It supports multiple image formats and input methods (URL or file upload) with comprehensive error handling and rate limiting.
 
 ## System Architecture
 
@@ -96,7 +96,7 @@ The Image Prompt Extractor is a web service that analyzes images and generates c
 - June 19, 2025: Fixed system dependency issues and created simplified image analyzer
 - June 19, 2025: Updated web interface layout for side-by-side image and prompt display
 - June 19, 2025: Enhanced with forensic precision - exact positioning, angles, spatial relationships with precise directional terms (3 sentences, observable facts only)
-- June 21, 2025: Updated to generate concise comma-separated tags instead of lengthy descriptions (format: anime, drawing, 1_woman, 1_man, clothing_details, pose, background, lighting, colors)
+- June 21, 2025: Updated to generate detailed structured analysis covering image type, subject characteristics, style/artistry, and additional details for best prompt generation
 
 ## User Preferences
 
