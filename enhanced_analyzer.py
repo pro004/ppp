@@ -172,18 +172,39 @@ CRITICAL REQUIREMENTS:
         try:
             text = raw_text.strip()
             
-            # Only remove clear AI response prefixes, keep all content
-            minimal_prefixes = [
+            # Remove all AI response prefixes and formatting text
+            prefixes_to_remove = [
+                "Here's a detailed analysis of the image, formatted as requested:",
                 "Here's a comprehensive analysis of the image:",
                 "Here's the comma-separated description:",
                 "Based on the detailed criteria:",
+                "Here's a detailed analysis:",
+                "Here's the analysis:",
+                "Analysis of the image:",
+                "Detailed analysis:",
                 "Analysis:",
+                "Here's what I see:",
+                "The image shows:",
+                "Looking at this image:",
+                "In this image:",
+                "I can see:",
+                "This image contains:",
+                "The visual analysis reveals:",
+                "Upon examination:",
+                "Visual description:",
+                "Image description:",
+                "Formatted as requested:",
+                "As requested:",
             ]
             
-            for prefix in minimal_prefixes:
+            # Remove prefixes more aggressively
+            for prefix in prefixes_to_remove:
                 if text.lower().startswith(prefix.lower()):
                     text = text[len(prefix):].strip()
                     break
+            
+            # Also check for and remove any remaining prefixes at the start
+            text = re.sub(r'^(here\'s|this is|the image shows?|i can see|looking at|in this image|upon examination|visual description|image description)[^a-z]*', '', text, flags=re.IGNORECASE)
             
             # Remove markdown formatting but preserve content
             text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)  # Bold
@@ -236,10 +257,15 @@ CRITICAL REQUIREMENTS:
             text = re.sub(r',\s*,+', ',', text)  # Remove multiple consecutive commas
             text = re.sub(r'\s*,\s*', ', ', text)  # Standardize comma spacing
             
-            # Only remove minimal filler words that add no value
-            minimal_fillers = ['clearly', 'obviously', 'evidently']
-            for filler in minimal_fillers:
-                text = re.sub(f'\\b{filler}\\b', '', text, flags=re.IGNORECASE)
+            # Remove common filler phrases that add no descriptive value
+            filler_phrases = [
+                'clearly visible', 'obviously', 'evidently', 'as you can see',
+                'it appears that', 'it seems that', 'we can observe',
+                'what we see is', 'what is visible', 'can be seen',
+                'appears to be', 'seems to be', 'looks like'
+            ]
+            for filler in filler_phrases:
+                text = re.sub(f'\\b{re.escape(filler)}\\b', '', text, flags=re.IGNORECASE)
             
             # Clean spacing
             text = re.sub(r'\s+', ' ', text)
