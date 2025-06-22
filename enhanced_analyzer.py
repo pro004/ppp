@@ -78,32 +78,7 @@ class EnhancedImageAnalyzer:
             api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={self.api_key}"
             
             # Enhanced prompt focusing on accurate object positioning
-            enhanced_prompt = """Describe this image exactly as it appears, focusing on precise object positioning.
-
-IMAGE QUALITY: resolution, clarity, lighting, focus quality
-
-OBJECT POSITIONING - Describe exactly what you see:
-- What objects/people are present and WHERE they are positioned
-- EXACT body posture: sitting on what, standing how, lying where
-- Precise arm positions: left arm doing what, right arm doing what
-- Hand placement: each hand separately, what they're touching/holding
-- Leg positioning: both legs, exact stance, foot placement
-- Head orientation: facing which direction, tilted how
-
-APPEARANCE DETAILS:
-- Hair color/style, eye state, skin tone, facial expression
-- Exact clothing items, colors, patterns, accessories
-- Objects being held, worn, or interacted with
-
-BACKGROUND ELEMENTS:
-- Specific objects, furniture, architectural details
-- Colors, lighting, spatial relationships
-
- CRITERIA (only if clearly present): Color Schemes, Objects, Textures, Emotions,  Composition 6. Lighting, Context,  Action,  Style,  Narrative 
-, Symbolism, Spatial Depth,  Focal Points,  Line & Shape 
-,Typography, Sensory Cues
-
-CRITICAL: Describe the actual positioning visible in the image. Do not modify or assume positions not shown."""
+            enhanced_prompt = """Provide a detailed description of the image, focusing on all aspects of the visual content. Analyze the image with Run multiple tests, gender , including higehr resolution, Camera angle, Setting, Shot type, Perspective distortions, Dynamic elements, Spatial relationships, Position in frame, Sharpness and Clarity, Noise and Graininess, Pixelation,  Compression Artifacts, focus and depth of field, lighting, focus, and clarity, Clothing, accessories, objects held, object Pose and Body Positioning, including what objects or people are present and their exact locations in the frame, Physical traits , their facial reaction, facial possition, as well as their body posture, arm and leg positioning, and head orientation. Include appearance details such as hair color and style, eye state, skin tone, facial expression, clothing, and accessories, along with any objects being held or interacted with, background, describe the elements of background , background colors, background lighting, and spatial relationships, Evaluate the composition, highlighting balance, symmetry, or asymmetry, and provide insights into any emotional tone or context present in the image, the applicable, discuss the artistic style (e.g., anime, realism, digital art), textures, patterns, any more object if present then tell, image backgroud,  and any symbolism or narrative conveyed through the image. Finally, ensure that the description remains focused on what is observable, without assuming or adding details not visible in the image. Prioritize clarity, accuracy, and thoroughness in capturing the visual elements, with removing the unnecessary things, including any symbolic or emotional undertones that the image may convey. Just give the prompt only"""
             
             payload = {
                 "contents": [{
